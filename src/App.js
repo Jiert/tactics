@@ -9,7 +9,8 @@ import {createNewWarrior} from './utils';
 import './App.css';
 
 const mapStateToProps = state => ({
-  units: state.units
+  units: state.units,
+  activeUnit: state.activeUnit
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -48,12 +49,17 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h2>Monkey</h2>
-
-        <button onClick={this.onClick}>New Unit</button>
-
         <div className="board">
           {this.squares().map(square => <Square square={square} units={this.props.units}/>)}
+        </div>
+
+        <div>
+          <h2>Monkey</h2>
+
+          <button onClick={this.onClick}>New Warrior</button>
+
+          {this.props.activeUnit.name}
+
         </div>
       </div>
     );

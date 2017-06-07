@@ -18,3 +18,10 @@ export const removeUnit = (unit, location) => {
     payload: unit
   }
 }
+
+export const setActiveUnit = unit => {
+  return {
+    type: 'SET_ACTIVE_UNIT',
+    payload: unit
+  }
+}

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import {addUnit, removeUnit} from './actions';
+import {addUnit, removeUnit, setActiveUnit} from './actions';
 
+// TODO: Not sure about these dispatch patterns
 const mapDispatchToProps = dispatch => ({
   addUnit: (unit, location) => dispatch(addUnit(unit, location)),
-  removeUnit: (unit, location) => dispatch(removeUnit(unit, location))
+  removeUnit: (unit, location) => dispatch(removeUnit(unit, location)),
+  setActiveUnit: unit => dispatch(setActiveUnit(unit))
 })
 
 class Unit extends Component {
@@ -20,8 +22,10 @@ class Unit extends Component {
   }
 
   onClick(event) {    
-    const location = `${window.prompt('location')}`
+    this.props.setActiveUnit(this.props.unit)
 
+    // This all works
+    const location = `${window.prompt('location')}`
     this.props.addUnit(this.props.unit, {x: Number(location.slice(0, 1)), y: Number(location.slice(1, 2))})
     this.props.removeUnit(this.props.unit, this.props.location)
   }
