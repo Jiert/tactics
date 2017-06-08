@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import {addUnit} from './actions';
+import {addUnit, setUnitLocation} from './actions';
 import Unit from './Unit';
 import Square from './Square';
 
@@ -14,7 +14,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  addUnit: (unit, location) => dispatch(addUnit(unit, location))
+  addUnit: (unit, location) => dispatch(addUnit(unit, location)),
+  setUnitLocation: (unit, location) => dispatch(setUnitLocation(unit, location))
 })
 
 class App extends Component {
@@ -43,7 +44,10 @@ class App extends Component {
 
   onClick() {
     const warrior = createNewWarrior();
-    this.props.addUnit(warrior, {x: 8, y: 1})
+
+    this.props.addUnit(warrior);
+    this.props.setUnitLocation(warrior, {x: 8, y: 1})
+
   }
 
   render() {

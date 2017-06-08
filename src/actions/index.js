@@ -1,21 +1,15 @@
-let nextUnitId = 0;
 
 export const addUnit = (unit, location) => {
   return {
     type: 'ADD_UNIT',
-    location,
-    payload: {
-      id: nextUnitId++,
-      ...unit
-    }
+    payload: {unit, location}
   }
 }
 
 export const removeUnit = (unit, location) => {
   return {
     type: 'REMOVE_UNIT',
-    location,
-    payload: unit
+    payload: {unit, location}
   }
 }
 
@@ -23,5 +17,12 @@ export const setActiveUnit = unit => {
   return {
     type: 'SET_ACTIVE_UNIT',
     payload: unit
+  }
+}
+
+export const setUnitLocation = (unit, location) => {
+  return {
+    type: 'SET_UNIT_LOCATION',
+    payload: {unit, location}
   }
 }

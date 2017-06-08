@@ -1,20 +1,17 @@
-const $ = (a, b) => (`${a}${b}`);
-
-const units = (state = {}, action) => {
-  const selector = action.location && $(action.location.x, action.location.y);
-  
+const units = (state = {}, action) => { 
   switch (action.type) {  
     case 'ADD_UNIT':
       return {
         ...state,
-        [selector]: action.payload
+        [action.payload.unit.id]: action.payload.unit
       }
 
-    case 'REMOVE_UNIT':
-      return {
-        ...state,
-        [selector]: null
-      } 
+    // This reads exactly as the one above...
+    // case 'UPDATE_UNIT':
+    //   return {
+    //     ...state,
+    //     [action.payload.id]: action.payload
+    //   } 
 
     default:
       return state
