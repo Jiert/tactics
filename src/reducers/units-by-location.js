@@ -1,13 +1,15 @@
 const unitsByLocation = (state = {}, action) => {
   switch (action.type) {
     case 'SET_UNIT_LOCATION':
+
+      // TODO: Make sure we can override before we set
+
       const location = action.payload.location;
       const coords = `${location.x}${location.y}`;
-      // debugger;
 
       return {
         ...state,
-        [coords]: action.payload.unit.id
+        [coords]: action.payload.id
       };
 
     default:

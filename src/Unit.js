@@ -21,13 +21,9 @@ class Unit extends Component {
     console.log('goodbye!')
   }
 
-  onClick(event) {    
+  onClick(event) {
+    event.stopPropagation();
     this.props.setActiveUnit(this.props.unit)
-
-    // This all works
-    const location = `${window.prompt('location')}`
-    this.props.addUnit(this.props.unit, {x: Number(location.slice(0, 1)), y: Number(location.slice(1, 2))})
-    this.props.removeUnit(this.props.unit, this.props.location)
   }
 
   render() {

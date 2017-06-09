@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import {addUnit, setUnitLocation} from './actions';
+import {addUnit, setUnitLocation, setMoveMode} from './actions';
 import Unit from './Unit';
 import Square from './Square';
 
@@ -15,7 +15,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   addUnit: (unit, location) => dispatch(addUnit(unit, location)),
-  setUnitLocation: (unit, location) => dispatch(setUnitLocation(unit, location))
+  setUnitLocation: (unit, location) => dispatch(setUnitLocation(unit, location)),
+  setMoveMode: bool => dispatch(setMoveMode(bool)) 
 })
 
 class App extends Component {
@@ -24,6 +25,10 @@ class App extends Component {
     super(props);
 
     this.onClick = this.onClick.bind(this);
+    this.onOtherClick = this.onOtherClick.bind(this);
+
+    this.onMove = this.onMove.bind(this);
+
     this.state = {
       boardHeight: 10,
       boardWidth: 10,
@@ -43,26 +48,46 @@ class App extends Component {
   }
 
   onClick() {
-    const warrior = createNewWarrior();
+    const warrior1 = createNewWarrior();
+    this.props.addUnit(warrior1);
+    this.props.setUnitLocation(warrior1.id, {x: 7, y: 2})
+  }
 
-    this.props.addUnit(warrior);
-    this.props.setUnitLocation(warrior, {x: 8, y: 1})
+  onOtherClick() {
+    const warrior2 = createNewWarrior();
+    this.props.addUnit(warrior2);
+    this.props.setUnitLocation(warrior2.id, {x: 7, y: 4})
+  }
 
+  onMove() {
+    this.props.setMoveMode(true);
   }
 
   render() {
     return (
       <div className="App">
         <div className="board">
-          {this.squares().map(square => <Square square={square} units={this.props.units}/>)}
+          {this.squares().map(square => <Square key={`${square.height}${square.width}`} square={square} units={this.props.units}/>)}
         </div>
 
         <div>
           <h2>Monkey</h2>
 
           <button onClick={this.onClick}>New Warrior</button>
+          <button onClick={this.onOtherClick}>New Other Warrior</button>
 
-          {this.props.activeUnit.name}
+          <h5>Active Unit</h5>
+
+          <ul>
+            <li>{this.props.activeUnit.name}</li>
+            <li>{this.props.activeUnit.id}</li>
+            <li>{this.props.activeUnit.hitPoints}</li>
+            <li>{this.props.activeUnit.symbol}</li>
+          </ul>
+
+
+          <button onClick={this.onMove}>Move</button>
+
 
         </div>
       </div>

@@ -20,9 +20,23 @@ export const setActiveUnit = unit => {
   }
 }
 
-export const setUnitLocation = (unit, location) => {
+export const setUnitLocation = (id, location) => {
   return {
     type: 'SET_UNIT_LOCATION',
-    payload: {unit, location}
+    payload: {id, location}
+  }
+}
+
+export const setMoveMode = bool => {
+  return {
+    type: 'SET_MOVE_ACTIVE',
+    payload: bool
+  }
+}
+
+export const setDestinationIntent = location => {
+  return {
+    type: 'SET_DESTINATION_INTENT',
+    payload: location
   }
 }
