@@ -1,7 +1,7 @@
 .App {
   display: flex;
   justify-content: space-around;
-  text-align: center;
+  // text-align: center;
 }
 
 .App-logo {
@@ -32,7 +32,25 @@
 }
 
 .square {
+  background: rgba(134, 234, 116, 0.17);  
   height: 50px;
   width: 50px;
-  box-shadow: inset 0px 0px 0px 1px;
+  box-shadow: inset 1px 1px 0px 0px rgb(255, 255, 255), inset -1px -1px 0px rgba(187, 187, 187, 0.37);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square span {
+  display: none;
+  // font-size: 9px;
+  // color: #ccc;
+}
+
+.unit {
+  font-size: 30px;
+}
+
+.unit:hover {
+  cursor: pointer;
 }

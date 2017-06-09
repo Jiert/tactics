@@ -74,8 +74,10 @@ class Square extends Component {
   render() {
     return (
       <div className="square" onClick={this.onClick}>
-        {this.props.square.height}, 
-        {this.props.square.width} 
+        <span>
+          {this.props.square.height}
+          {this.props.square.width}
+        </span>
         {this.state.unit && <Unit unit={this.state.unit} location={this.location} />}
       </div>
     );

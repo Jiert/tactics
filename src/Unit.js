@@ -29,7 +29,7 @@ class Unit extends Component {
   render() {
     console.log(this.props)
     return(
-      <div onClick={this.onClick}>
+      <div className="unit" onClick={this.onClick}>
         {this.props.unit.symbol}
       </div>
     )
