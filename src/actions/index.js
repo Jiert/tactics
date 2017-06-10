@@ -40,3 +40,17 @@ export const setDestinationIntent = location => {
     payload: location
   }
 }
+
+export const setAttackMode = bool => {
+  return {
+    type: 'PREPARE_TO_ATTACK',
+    payload: bool
+  }
+}
+
+export const setAttackTarget = bool => {
+  return {
+    type: 'SET_ATTACK_TARGET',
+    payload: bool
+  }
+}

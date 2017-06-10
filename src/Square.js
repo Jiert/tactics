@@ -26,10 +26,10 @@ class Square extends Component {
 
     this.state = {
       unit: null,
-      key: `${props.square.height}${props.square.width}`,
+      key: `${props.square.x}${props.square.y}`,
       location: {
-        x: props.square.height,
-        y: props.square.width
+        x: props.square.x,
+        y: props.square.y
       }
     }
   }
@@ -75,8 +75,8 @@ class Square extends Component {
     return (
       <div className="square" onClick={this.onClick}>
         <span>
-          {this.props.square.height}
-          {this.props.square.width}
+          {this.props.square.x}
+          {this.props.square.y}
         </span>
         {this.state.unit && <Unit unit={this.state.unit} location={this.location} />}
       </div>

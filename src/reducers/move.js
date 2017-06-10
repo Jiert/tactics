@@ -1,6 +1,9 @@
 const initialState = {
   mode: false,
-  intendedDestination: null
+  intendedDestination: null,
+  // maybe not the best place for this, but 
+  attackTarget: null,
+  attacking: false
 };
 
 
@@ -10,6 +13,12 @@ const move = (state = initialState, action) => {
       return {
         ...state,
         mode: action.payload
+      }
+
+    case 'PREPARE_TO_ATTACK':
+      return {
+        ...state,
+        attacking: action.payload
       }
 
     case 'SET_DESTINATION_INTENT':

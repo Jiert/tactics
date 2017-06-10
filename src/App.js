@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import {addUnit, setUnitLocation, setMoveMode} from './actions';
+import {
+  addUnit, 
+  setUnitLocation, 
+  setMoveMode,
+  setAttackMode} from './actions';
 import Unit from './Unit';
 import Square from './Square';
 
@@ -16,7 +20,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   addUnit: (unit, location) => dispatch(addUnit(unit, location)),
   setUnitLocation: (unit, location) => dispatch(setUnitLocation(unit, location)),
-  setMoveMode: bool => dispatch(setMoveMode(bool)) 
+  setMoveMode: bool => dispatch(setMoveMode(bool)),
+  setAttackMode: bool => dispatch(setAttackMode(bool))
 })
 
 class App extends Component {
@@ -24,10 +29,10 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.onClick = this.onClick.bind(this);
-    this.onOtherClick = this.onOtherClick.bind(this);
-
     this.onMove = this.onMove.bind(this);
+    this.onClick = this.onClick.bind(this);
+    this.onAttack = this.onAttack.bind(this);
+    this.onOtherClick = this.onOtherClick.bind(this);
 
     this.state = {
       boardHeight: 10,
@@ -38,9 +43,9 @@ class App extends Component {
   squares() {
     const squares = [];
 
-    for (var height = 0; height < this.state.boardHeight; height++) {
-      for (var width = 0; width < this.state.boardWidth; width++) {
-        squares.push({height, width})
+    for (var x = this.state.boardWidth - 1; x >= 0; x--) {
+      for (var y = 0; y < this.state.boardHeight; y++) {
+        squares.push({x, y})
       }
     }
 
@@ -63,31 +68,37 @@ class App extends Component {
     this.props.setMoveMode(true);
   }
 
+  onAttack() {
+    this.props.setAttackMode(true);
+  }
+
+  renderActiveUnit() {
+    return (
+      <div>
+        <h2>{this.props.activeUnit.name}</h2>
+        <ul>
+          <li>Id: {this.props.activeUnit.id}</li>
+          <li>Health: {this.props.activeUnit.health} / {this.props.activeUnit.hitPoints}</li>
+        </ul>
+        <button onClick={this.onMove}>Move</button>
+        <button onClick={this.onAttack}>Attack</button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className="App">
         <div className="board">
-          {this.squares().map(square => <Square key={`${square.height}${square.width}`} square={square} units={this.props.units}/>)}
+          {this.squares().map(square => <Square key={`${square.x}${square.y}`} square={square} units={this.props.units}/>)}
         </div>
 
         <div>
-          <h2>Monkey</h2>
 
           <button onClick={this.onClick}>New Warrior</button>
           <button onClick={this.onOtherClick}>New Other Warrior</button>
 
-          <h5>Active Unit</h5>
-
-          <ul>
-            <li>{this.props.activeUnit.name}</li>
-            <li>{this.props.activeUnit.id}</li>
-            <li>{this.props.activeUnit.hitPoints}</li>
-            <li>{this.props.activeUnit.symbol}</li>
-          </ul>
-
-
-          <button onClick={this.onMove}>Move</button>
-
+          {this.props.activeUnit.id && this.renderActiveUnit()}
 
         </div>
       </div>
