@@ -78,7 +78,7 @@ class Square extends Component {
           {this.props.square.x}
           {this.props.square.y}
         </span>
-        {this.state.unit && <Unit unit={this.state.unit} location={this.location} />}
+        {this.state.unit && <Unit unit={this.state.unit} location={this.state.location} />}
       </div>
     );
   }

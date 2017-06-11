@@ -1,17 +1,24 @@
 
-export const addUnit = (unit, location) => {
+export const addUnit = unit => {
   return {
     type: 'ADD_UNIT',
-    payload: {unit, location}
+    payload: unit
   }
 }
 
-export const removeUnit = (unit, location) => {
+export const updateUnit = (id, updates) => {
   return {
-    type: 'REMOVE_UNIT',
-    payload: {unit, location}
+    type: 'UPDATE_UNIT',
+    payload: {id, updates}
   }
 }
+
+// export const removeUnit = (unit, location) => {
+//   return {
+//     type: 'REMOVE_UNIT',
+//     payload: {unit, location}
+//   }
+// }
 
 export const setActiveUnit = unit => {
   return {
@@ -41,10 +48,10 @@ export const setDestinationIntent = location => {
   }
 }
 
-export const setAttackMode = bool => {
+export const setAttackingUnit = id => {
   return {
-    type: 'PREPARE_TO_ATTACK',
-    payload: bool
+    type: 'SET_ATTACKING_UNIT',
+    payload: id
   }
 }
 

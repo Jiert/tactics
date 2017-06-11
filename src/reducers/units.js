@@ -3,15 +3,17 @@ const units = (state = {}, action) => {
     case 'ADD_UNIT':
       return {
         ...state,
-        [action.payload.unit.id]: action.payload.unit
+        [action.payload.id]: action.payload
       }
 
-    // This reads exactly as the one above...
-    // case 'UPDATE_UNIT':
-    //   return {
-    //     ...state,
-    //     [action.payload.id]: action.payload
-    //   } 
+    case 'UPDATE_UNIT':
+      return {
+        ...state,
+        [action.payload.id]: {
+          ...state[action.payload.id],
+          ...action.payload.updates
+        }
+      } 
 
     default:
       return state

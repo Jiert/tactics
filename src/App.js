@@ -4,7 +4,7 @@ import {
   addUnit, 
   setUnitLocation, 
   setMoveMode,
-  setAttackMode} from './actions';
+  setAttackingUnit} from './actions';
 import Unit from './Unit';
 import Square from './Square';
 
@@ -19,9 +19,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   addUnit: (unit, location) => dispatch(addUnit(unit, location)),
-  setUnitLocation: (unit, location) => dispatch(setUnitLocation(unit, location)),
+  setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
   setMoveMode: bool => dispatch(setMoveMode(bool)),
-  setAttackMode: bool => dispatch(setAttackMode(bool))
+  setAttackingUnit: id => dispatch(setAttackingUnit(id))
 })
 
 class App extends Component {
@@ -43,8 +43,8 @@ class App extends Component {
   squares() {
     const squares = [];
 
-    for (var x = this.state.boardWidth - 1; x >= 0; x--) {
-      for (var y = 0; y < this.state.boardHeight; y++) {
+    for (var y = this.state.boardWidth - 1; y >= 0; y--) {
+      for (var x = 0; x < this.state.boardHeight; x++) {
         squares.push({x, y})
       }
     }
@@ -69,7 +69,7 @@ class App extends Component {
   }
 
   onAttack() {
-    this.props.setAttackMode(true);
+    this.props.setAttackingUnit(this.props.activeUnit.id);
   }
 
   renderActiveUnit() {

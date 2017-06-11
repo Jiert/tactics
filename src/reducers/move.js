@@ -15,10 +15,10 @@ const move = (state = initialState, action) => {
         mode: action.payload
       }
 
-    case 'PREPARE_TO_ATTACK':
+    case 'SET_ATTACKING_UNIT':
       return {
         ...state,
-        attacking: action.payload
+        attackingUnitId: action.payload
       }
 
     case 'SET_DESTINATION_INTENT':
