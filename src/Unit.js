@@ -5,7 +5,6 @@ import {
   updateUnit,
   setActiveUnit,
   setUnitLocation,
-  setAttackTarget,
   setAttackingUnit
 } from './actions';
 
@@ -18,10 +17,9 @@ const mapStateToProps = state => ({
 
 // TODO: Not sure about these dispatch patterns
 const mapDispatchToProps = dispatch => ({
-  setAttackTarget: id => dispatch(setAttackTarget(id)),
   addUnit: unit => dispatch(addUnit(unit)),
   updateUnit: (id, updates) => dispatch(updateUnit(id, updates)),
-  setActiveUnit: unit => dispatch(setActiveUnit(unit)),
+  setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
   setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
   setAttackingUnit: id => dispatch(setAttackingUnit(id))
 })
@@ -30,8 +28,8 @@ const mapDispatchToProps = dispatch => ({
 function getRandomInt(min, max) {
   // min = Math.ceil(min);
   // max = Math.floor(max);
-  // return Math.floor(Math.random() * (max - min)) + min;
-  return Math.floor(Math.random() * (10 - 0));
+  return Math.floor(Math.random() * (max - min)) + min;
+  // return Math.floor(Math.random() * (10 - 0));
 }
 
 class Unit extends Component {
@@ -71,7 +69,13 @@ class Unit extends Component {
     // This is just a test, we'll need a better way:
 
     // debugger;
-    const random = getRandomInt();
+    // Going to have to put some thought into how we want to to do this here.
+    // There's a lot to think about.
+    // 1. Recall teh DND article
+    // 2. Units should probably have "hitPoints" or "attackPoints" or whatever we want to call
+    // Their baseline numnber for damage they can cause. Perhaps that's the number to have, not 
+    // just halving the totaly hit  points
+    const random = getRandomInt(1, this.props.unit.maxHealth / 2);
     const newHealth = this.props.unit.health - random;
 
     console.log('Random: ', random, 'newHealth: ', newHealth)
@@ -102,12 +106,12 @@ class Unit extends Component {
     ) {
       this.battle();
     } else {
-      this.props.setActiveUnit(this.props.unit);
+      this.props.setActiveUnit(this.props.unit.id, this.props.location);
     }
   }
 
   render() {
-    const percent = (this.props.unit.health / this.props.unit.hitPoints) * 100;
+    const percent = (this.props.unit.health / this.props.unit.maxHealth) * 100;
     const healthStyle = {
       width: `${percent}%`
     }

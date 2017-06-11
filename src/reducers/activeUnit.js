@@ -2,7 +2,8 @@ const activeUnit = (state = {}, action) => {
   switch (action.type) {  
     case 'SET_ACTIVE_UNIT':
       return {
-        ...action.payload
+        id: action.payload.id,
+        location: action.payload.location
       }
 
     default:

@@ -41,6 +41,10 @@
   align-items: center;
 }
 
+.highlight {
+  background: rgba(134, 234, 116, 0.30);  
+}
+
 .square span {
   display: none;
 }

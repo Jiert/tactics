@@ -65,6 +65,20 @@ class Square extends Component {
     this.setState({unit})
   }
 
+  shouldHighlightForMoveRange() {
+    if (!this.props.unitMoving) return false;
+
+    // at some point we'll have to pass in the moving unit's mobility prop, but for now
+    const movement = 2;
+    const movingUnitLocation = this.props.activeUnit.location;
+
+    // both x AND y have to be less than movement
+    const xValid = Math.abs(this.state.location.x - movingUnitLocation.x) <= movement
+    const yValid = Math.abs(this.state.location.y - movingUnitLocation.y) <= movement
+    
+    return xValid && yValid;
+  }
+
   onClick(event) {
     if (this.props.unitMoving) {
       this.props.setDestinationIntent(this.state.location)
@@ -72,8 +86,14 @@ class Square extends Component {
   }
 
   render() {
+    let classes = "square";
+
+    if (this.shouldHighlightForMoveRange()) {
+      classes += " highlight"
+    }
+
     return (
-      <div className="square" onClick={this.onClick}>
+      <div className={classes} onClick={this.onClick}>
         <span>
           {this.props.square.x}
           {this.props.square.y}

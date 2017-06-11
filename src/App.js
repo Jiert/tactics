@@ -73,12 +73,14 @@ class App extends Component {
   }
 
   renderActiveUnit() {
+    const unit = this.props.units[this.props.activeUnit.id];
+
     return (
       <div>
-        <h2>{this.props.activeUnit.name}</h2>
+        <h2>{unit.name}</h2>
         <ul>
-          <li>Id: {this.props.activeUnit.id}</li>
-          <li>Health: {this.props.activeUnit.health} / {this.props.activeUnit.hitPoints}</li>
+          <li>Id: {unit.id}</li>
+          <li>Health: {unit.health} / {unit.maxHealth}</li>
         </ul>
         <button onClick={this.onMove}>Move</button>
         <button onClick={this.onAttack}>Attack</button>
