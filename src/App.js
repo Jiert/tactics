@@ -34,7 +34,7 @@ class App extends Component {
 
     this.state = {
       boardHeight: 20,
-      boardWidth: 20,
+      boardWidth: 30,
     }
   }
 
@@ -85,7 +85,7 @@ class App extends Component {
           boardWidth={this.state.boardWidth} 
         />
 
-        <div>
+        <div className="app-menu">
           <button onClick={this.onClick}>New Warrior</button>
           <button onClick={this.onOtherClick}>New Other Warrior</button>
           {this.props.activeUnit.id && this.renderActiveUnit()}

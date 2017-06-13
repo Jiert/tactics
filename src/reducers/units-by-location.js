@@ -5,7 +5,7 @@ const unitsByLocation = (state = {}, action) => {
       // TODO: Make sure we can override before we set
 
       const location = action.payload.location;
-      const coords = `${location.x}${location.y}`;
+      const coords = `${location.x}.${location.y}`;
 
       return {
         ...state,

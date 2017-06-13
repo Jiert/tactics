@@ -31,7 +31,7 @@ class Square extends Component {
 
     this.state = {
       unit: null,
-      key: `${props.square.x}${props.square.y}`,
+      key: `${props.square.x}.${props.square.y}`,
       location: {
         x: props.square.x,
         y: props.square.y

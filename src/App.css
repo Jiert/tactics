@@ -1,7 +1,15 @@
 .App {
-  display: flex;
-  justify-content: space-around;
+  // display: flex;
+  // justify-content: space-around;
   // text-align: center;
+}
+
+.app-menu {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: #ddd;
+  width: 300px;
 }
 
 .App-logo {
@@ -26,6 +34,7 @@
 }
 
 .board {
+  padding: 30px 30px 200px;
   flex-wrap: wrap;
   display: flex;
 }
