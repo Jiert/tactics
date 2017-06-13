@@ -5,9 +5,7 @@ import {
   setUnitLocation, 
   setMoveMode,
   setAttackingUnit} from './actions';
-import Unit from './Unit';
-import Square from './Square';
-
+import Squares from './Squares';
 import {createNewWarrior} from './utils';
 
 import './App.css';
@@ -35,21 +33,9 @@ class App extends Component {
     this.onOtherClick = this.onOtherClick.bind(this);
 
     this.state = {
-      boardHeight: 10,
-      boardWidth: 10,
+      boardHeight: 20,
+      boardWidth: 20,
     }
-  }
-
-  squares() {
-    const squares = [];
-
-    for (var y = this.state.boardWidth - 1; y >= 0; y--) {
-      for (var x = 0; x < this.state.boardHeight; x++) {
-        squares.push({x, y})
-      }
-    }
-
-    return squares;
   }
 
   onClick() {
@@ -89,20 +75,22 @@ class App extends Component {
   }
 
   render() {
+
+
     return (
       <div className="App">
-        <div className="board">
-          {this.squares().map(square => <Square key={`${square.x}${square.y}`} square={square} units={this.props.units}/>)}
-        </div>
+
+        <Squares 
+          boardHeight={this.state.boardHeight} 
+          boardWidth={this.state.boardWidth} 
+        />
 
         <div>
-
           <button onClick={this.onClick}>New Warrior</button>
           <button onClick={this.onOtherClick}>New Other Warrior</button>
-
           {this.props.activeUnit.id && this.renderActiveUnit()}
-
         </div>
+
       </div>
     );
   }

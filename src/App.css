@@ -28,7 +28,6 @@
 .board {
   flex-wrap: wrap;
   display: flex;
-  max-width: 500px;
 }
 
 .square {
@@ -46,7 +45,7 @@
 }
 
 .square span {
-  display: none;
+  display: none;    
 }
 
 .unit {
