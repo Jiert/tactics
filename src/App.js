@@ -7,6 +7,7 @@ import {
   setAttackingUnit} from './actions';
 import Squares from './Squares';
 import {createNewWarrior} from './utils';
+import isEqual from 'lodash.isequal';
 
 import './App.css';
 
@@ -36,6 +37,14 @@ class App extends Component {
       boardHeight: 20,
       boardWidth: 30,
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // basically activeUnit.id
+    if (!isEqual(this.props.activeUnit.id, nextProps.activeUnit.id)) {
+      return true;
+    }
+    return false;
   }
 
   onClick() {
@@ -75,7 +84,7 @@ class App extends Component {
   }
 
   render() {
-
+    console.log('app render')
 
     return (
       <div className="App">

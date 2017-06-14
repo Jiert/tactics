@@ -21,13 +21,15 @@ class Squares extends Component {
   }
 
   render() {
+    console.log('squares render')
+
     const boardStyles = {
       height: 50 * this.props.boardHeight,
       width: 50 * this.props.boardWidth
     }
 
     const squares = getSquares(this.props.boardHeight, this.props.boardWidth)
-    console.log('so how often now?')
+
     return (
       <div className="board" style={boardStyles}>
         {squares.map(square => <Square key={`${square.x}.${square.y}`} square={square} />)}

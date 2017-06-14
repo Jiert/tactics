@@ -3,5 +3,6 @@ export const createNewWarrior = () => ({
   name: 'Warrior',
   maxHealth: 10,
   health: 10,
+  mobility: 2,
   symbol: '⚔'
 })

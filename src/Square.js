@@ -28,10 +28,14 @@ class Square extends Component {
     super(props);
     
     this.onClick = this.onClick.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
 
     this.state = {
       unit: null,
       key: `${props.square.x}.${props.square.y}`,
+      hover: false,
+      hightlight: false,
       location: {
         x: props.square.x,
         y: props.square.y
@@ -43,7 +47,7 @@ class Square extends Component {
     const unitId = props.unitsByLocation && props.unitsByLocation[this.state.key];
     const unit = props.units[unitId];
 
-    return unit;
+    return unit || null;
   }
 
   componentWillReceiveProps(nextProps) { 
@@ -72,19 +76,57 @@ class Square extends Component {
     }
 
     const unit = this.getUnit(nextProps);
-    this.setState({unit})
+    const highlight = this.shouldHighlightForMoveRange(nextProps, this.state)
+    
+    this.setState({
+      unit,
+      highlight
+    })
   }
 
-  shouldHighlightForMoveRange() {
-    if (!this.props.unitMoving) return false;
+  shouldComponentUpdate(nextProps, nextState) {
+    // need to prevent renders if units are equal
+    const nextUnit = this.getUnit(nextProps);
+
+    // Need to experimentw with this shit.
+
+    if (
+      (nextUnit && !isEqual(this.state.unit, nextUnit)) || 
+      this.state.hover !== nextState.hover ||
+
+      // (this.state.highlight !== nextState.highlight &&
+      this.shouldHighlightForMoveRange(nextProps, nextState) ||
+
+
+      (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
+      // this.props.unitMoving !== nextProps.unitMoving 
+
+      // This causes 600 re-renders
+      // !isEqual(this.props.unitsByLocation, nextProps.unitsByLocation)
+
+
+      // this causes everything to rerender, this, should check against the ide of the square
+      // this.props.unitMoving !== nextProps.unitMoving 
+    ) {
+      // console.log('what is passing through hre: ', nextProps)
+        // debugger;
+
+      // console.log('state: ', this.state.unit, 'next unit: ', nextUnit)
+      return true;
+    }
+    return false;
+  }
+
+  shouldHighlightForMoveRange(props, state) {
+    if (!props.unitMoving || !props.activeUnit.location) return false;
 
     // at some point we'll have to pass in the moving unit's mobility prop, but for now
+    const movingUnitLocation = props.activeUnit.location;
     const movement = 2;
-    const movingUnitLocation = this.props.activeUnit.location;
 
     // both x AND y have to be less than movement
-    const xValid = Math.abs(this.state.location.x - movingUnitLocation.x) <= movement
-    const yValid = Math.abs(this.state.location.y - movingUnitLocation.y) <= movement
+    const xValid = Math.abs(state.location.x - movingUnitLocation.x) <= movement
+    const yValid = Math.abs(state.location.y - movingUnitLocation.y) <= movement
     
     return xValid && yValid;
   }
@@ -92,18 +134,44 @@ class Square extends Component {
   onClick(event) {
     if (this.props.unitMoving) {
       this.props.setDestinationIntent(this.state.location)
+    } else {
+      // NOt sure this is the buest place but
+      this.props.setActiveUnit(null, null)
+    }
+  }
+
+  onMouseEnter(event) {
+    // maybe we should check for a unit here too
+    // if (this.shouldHighlightForMoveRange(this.props, this.state)) {
+    if (this.state.highlight) {
+      this.setState({hover: true});
+    }
+  }
+
+  onMouseLeave(event) {
+    if (this.state.hover) {
+      this.setState({hover: false});
     }
   }
 
   render() {
     let classes = "square";
 
-    if (this.shouldHighlightForMoveRange()) {
+    // if (this.shouldHighlightForMoveRange(this.props, this.state)) {
+    if (this.state.highlight) {
       classes += " highlight"
     }
 
+    if (this.state.hover) {
+      classes += " hover"
+    }
+console.log('square render')
     return (
-      <div className={classes} onClick={this.onClick}>
+      <div 
+        className={classes}
+        onClick={this.onClick} 
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}>
         <span>
           {this.props.square.x}
           {this.props.square.y}

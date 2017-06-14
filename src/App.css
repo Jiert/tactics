@@ -6,7 +6,7 @@
 
 .app-menu {
   position: fixed;
-  bottom: 0;
+  bottom  : 0;
   right: 0;
   background: #ddd;
   width: 300px;
@@ -51,6 +51,10 @@
 
 .highlight {
   background: rgba(134, 234, 116, 0.30);  
+}
+
+.hover {
+ background: rgba(134, 234, 116, 0.60);   
 }
 
 .square span {
