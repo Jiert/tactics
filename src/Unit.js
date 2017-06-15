@@ -60,15 +60,6 @@ class Unit extends Component {
   }
 
   battle() {
-    console.log('WE"RE BEING ATTACKED!!!')
-    // This logic will need to get more complex but for now let's just 
-    // shave off some hit points
-
-    // This proves we can patch our units, which is nice
-
-    // This is just a test, we'll need a better way:
-
-    // debugger;
     // Going to have to put some thought into how we want to to do this here.
     // There's a lot to think about.
     // 1. Recall teh DND article

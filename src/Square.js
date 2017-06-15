@@ -76,7 +76,7 @@ class Square extends Component {
     }
 
     const unit = this.getUnit(nextProps);
-    const highlight = this.shouldHighlightForMoveRange(nextProps, this.state)
+    const highlight = this.inRange(nextProps, this.state)
     
     this.setState({
       unit,
@@ -93,7 +93,7 @@ class Square extends Component {
     if (
       (nextUnit && !isEqual(this.state.unit, nextUnit)) || 
       this.state.hover !== nextState.hover ||
-      this.shouldHighlightForMoveRange(nextProps, nextState) ||
+      this.inRange(nextProps, nextState) ||
       (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
     ) {
       return true;
@@ -101,7 +101,7 @@ class Square extends Component {
     return false;
   }
 
-  shouldHighlightForMoveRange(props, state) {
+  inRange(props, state) {
     if (!props.unitMoving || !props.activeUnit.location) return false;
 
     // at some point we'll have to pass in the moving unit's mobility prop, but for now
@@ -117,8 +117,12 @@ class Square extends Component {
 
   onClick(event) {
     if (this.props.unitMoving) {
-      this.props.setDestinationIntent(this.state.location)
-    } else {
+      if (this.inRange(this.props, this.state)) {
+        this.props.setDestinationIntent(this.state.location)  
+      } else {
+        return
+      }
+    }  else {
       // NOt sure this is the buest place but
       this.props.setActiveUnit(null, null)
     }
