@@ -93,25 +93,9 @@ class Square extends Component {
     if (
       (nextUnit && !isEqual(this.state.unit, nextUnit)) || 
       this.state.hover !== nextState.hover ||
-
-      // (this.state.highlight !== nextState.highlight &&
       this.shouldHighlightForMoveRange(nextProps, nextState) ||
-
-
       (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
-      // this.props.unitMoving !== nextProps.unitMoving 
-
-      // This causes 600 re-renders
-      // !isEqual(this.props.unitsByLocation, nextProps.unitsByLocation)
-
-
-      // this causes everything to rerender, this, should check against the ide of the square
-      // this.props.unitMoving !== nextProps.unitMoving 
     ) {
-      // console.log('what is passing through hre: ', nextProps)
-        // debugger;
-
-      // console.log('state: ', this.state.unit, 'next unit: ', nextUnit)
       return true;
     }
     return false;
@@ -142,7 +126,6 @@ class Square extends Component {
 
   onMouseEnter(event) {
     // maybe we should check for a unit here too
-    // if (this.shouldHighlightForMoveRange(this.props, this.state)) {
     if (this.state.highlight) {
       this.setState({hover: true});
     }
@@ -157,15 +140,14 @@ class Square extends Component {
   render() {
     let classes = "square";
 
-    // if (this.shouldHighlightForMoveRange(this.props, this.state)) {
     if (this.state.highlight) {
       classes += " highlight"
     }
 
-    if (this.state.hover) {
+    if (this.state.hover && !this.state.unit) {
       classes += " hover"
     }
-console.log('square render')
+
     return (
       <div 
         className={classes}
