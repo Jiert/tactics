@@ -1,5 +1,6 @@
 
 .app-menu {
+  height: 180px;
   position: fixed;
   bottom  : 0;
   right: 0;
