@@ -6,3 +6,14 @@ export const createNewWarrior = () => ({
   mobility: 2,
   symbol: '⚔'
 })
+
+export const createNewCastle = () => ({
+  id: new Date().toISOString(),
+  name: 'Castle',
+  maxHealth: 100,
+  health: 100,
+  mobility: 0,
+  symbol: '🏰'
+})
+
+

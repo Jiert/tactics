@@ -6,7 +6,7 @@ import {
   setMoveMode,
   setAttackingUnit} from './actions';
 import Squares from './Squares';
-import {createNewWarrior} from './utils';
+import {createNewWarrior, createNewCastle} from './utils';
 import isEqual from 'lodash.isequal';
 
 import './App.css';
@@ -40,7 +40,7 @@ class App extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // basically activeUnit.id
+    // TODO: Create a menu component and remove all this
     if (!isEqual(this.props.activeUnit.id, nextProps.activeUnit.id)) {
       return true;
     }
@@ -54,9 +54,9 @@ class App extends Component {
   }
 
   onOtherClick() {
-    const warrior2 = createNewWarrior();
-    this.props.addUnit(warrior2);
-    this.props.setUnitLocation(warrior2.id, {x: 7, y: 4})
+    const castle = createNewCastle();
+    this.props.addUnit(castle);
+    this.props.setUnitLocation(castle.id, {x: 7, y: 4})
   }
 
   onMove() {
@@ -96,7 +96,7 @@ class App extends Component {
 
         <div className="app-menu">
           <button onClick={this.onClick}>New Warrior</button>
-          <button onClick={this.onOtherClick}>New Other Warrior</button>
+          <button onClick={this.onOtherClick}>New Castle</button>
           {this.props.activeUnit.id && this.renderActiveUnit()}
         </div>
 

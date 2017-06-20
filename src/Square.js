@@ -50,7 +50,7 @@ class Square extends Component {
     return unit || null;
   }
 
-  componentWillReceiveProps(nextProps) { 
+  componentWillReceiveProps(nextProps) {
     if (
       this.state.unit && 
       nextProps.unitMoving &&
@@ -65,9 +65,7 @@ class Square extends Component {
       // 2. Move the unit to the new place (at some point we'll need to make sure it's successful)
       this.props.setUnitLocation(nextProps.activeUnit.id, nextProps.intendedDestination)
 
-      // 3. Since we're using the active Unit here, we need to update it's location 
-      // At some point perhapss we could path the active unit, but for right now I'm just coing 
-      // to call it again
+      // 3. Since we're using the active Unit here, we need to update it's location
       this.props.setActiveUnit(nextProps.activeUnit.id, nextProps.intendedDestination);
 
       // 4. Null out intent, moving, 
@@ -84,16 +82,17 @@ class Square extends Component {
     })
   }
 
+
+
   shouldComponentUpdate(nextProps, nextState) {
-    // need to prevent renders if units are equal
     const nextUnit = this.getUnit(nextProps);
 
-    // Need to experimentw with this shit.
-
     if (
-      (nextUnit && !isEqual(this.state.unit, nextUnit)) || 
+      nextUnit && this.state.unit === null ||
+      (nextUnit && this.state.unit && !isEqual(this.state.unit, nextUnit)) ||
       this.state.hover !== nextState.hover ||
       this.inRange(nextProps, nextState) ||
+      this.props.unitsByLocation[this.state.key] !== nextProps.unitsByLocation[nextState.key] ||
       (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
     ) {
       return true;
@@ -106,7 +105,7 @@ class Square extends Component {
 
     // at some point we'll have to pass in the moving unit's mobility prop, but for now
     const movingUnitLocation = props.activeUnit.location;
-    const movement = 2;
+    const movement = props.units[props.activeUnit.id].mobility; 
 
     // both x AND y have to be less than movement
     const xValid = Math.abs(state.location.x - movingUnitLocation.x) <= movement
@@ -122,8 +121,7 @@ class Square extends Component {
       } else {
         return
       }
-    }  else {
-      // NOt sure this is the buest place but
+    } else {
       this.props.setActiveUnit(null, null)
     }
   }
@@ -151,6 +149,8 @@ class Square extends Component {
     if (this.state.hover && !this.state.unit) {
       classes += " hover"
     }
+
+    console.log('square render with unit: ', this.state.unit)
 
     return (
       <div 

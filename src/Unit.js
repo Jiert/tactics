@@ -25,11 +25,8 @@ const mapDispatchToProps = dispatch => ({
 })
 
 
-function getRandomInt(min, max) {
-  // min = Math.ceil(min);
-  // max = Math.floor(max);
+const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
-  // return Math.floor(Math.random() * (10 - 0));
 }
 
 class Unit extends Component {
@@ -41,7 +38,7 @@ class Unit extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.unit.health <= 0) {
+    if (this.props.unit.health > 0 && nextProps.unit.health <= 0) {
       this.perish();
     }
   }
@@ -60,12 +57,11 @@ class Unit extends Component {
   }
 
   battle() {
-    // Going to have to put some thought into how we want to to do this here.
-    // There's a lot to think about.
-    // 1. Recall teh DND article
-    // 2. Units should probably have "hitPoints" or "attackPoints" or whatever we want to call
-    // Their baseline numnber for damage they can cause. Perhaps that's the number to have, not 
-    // just halving the totaly hit  points
+    // NOTE: Recall teh DND article
+    // Units should probably have "hitPoints" or "attackPoints" to represent
+    // their baseline number for damage they can cause. 
+    // For now though, we'll just randomly halve the hit points
+
     const random = getRandomInt(1, this.props.unit.maxHealth / 2);
     const newHealth = this.props.unit.health - random;
 
@@ -75,20 +71,16 @@ class Unit extends Component {
       health: newHealth
     })
 
-    // this.props.updateUnit(this.props.attackingUnitId, {
-    //   health: this.props.units[this.props.attackingUnitId].health - getRandomInt()
-    // })
-
     this.props.setAttackingUnit(null);
   }
 
   onClick(event) {
     event.stopPropagation();
 
-    // we're gonna need more logic here for when we have teams, but for now
+    // NOTE: will need to think about teams here
 
-    // TODO: Attacking unit information seems useless. Won't the attacking unit...
-    // always be the active unit? NO! NOt for the enemny or AI, or maybe player 2. Hmm..
+    // NOTE: Attacking unit information seems useless, but attacking unit 
+    // may not always be the active unit (for the enemny, or player 2)
 
     if (
       this.props.unit &&
@@ -102,6 +94,8 @@ class Unit extends Component {
   }
 
   render() {
+    console.log('unit render')
+
     const percent = (this.props.unit.health / this.props.unit.maxHealth) * 100;
     const healthStyle = {
       width: `${percent}%`
