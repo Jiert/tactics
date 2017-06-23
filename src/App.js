@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import {
   addUnit, 
-  setUnitLocation, 
+  finishTurn,
   setMoveMode,
+  setUnitLocation, 
   setAttackingUnit} from './actions';
 import Squares from './Squares';
 import {createNewWarrior, createNewCastle} from './utils';
@@ -20,7 +21,8 @@ const mapDispatchToProps = dispatch => ({
   addUnit: (unit, location) => dispatch(addUnit(unit, location)),
   setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
   setMoveMode: bool => dispatch(setMoveMode(bool)),
-  setAttackingUnit: id => dispatch(setAttackingUnit(id))
+  setAttackingUnit: id => dispatch(setAttackingUnit(id)),
+  finishTurn: () => dispatch(finishTurn())
 })
 
 class App extends Component {
@@ -32,6 +34,7 @@ class App extends Component {
     this.onClick = this.onClick.bind(this);
     this.onAttack = this.onAttack.bind(this);
     this.onOtherClick = this.onOtherClick.bind(this);
+    this.onFinishTurn = this.onFinishTurn.bind(this);
 
     this.state = {
       boardHeight: 20,
@@ -67,6 +70,10 @@ class App extends Component {
     this.props.setAttackingUnit(this.props.activeUnit.id);
   }
 
+  onFinishTurn() {
+    this.props.finishTurn();
+  }
+
   renderActiveUnit() {
     const unit = this.props.units[this.props.activeUnit.id];
 
@@ -97,6 +104,7 @@ class App extends Component {
         <div className="app-menu">
           <button onClick={this.onClick}>New Warrior</button>
           <button onClick={this.onOtherClick}>New Castle</button>
+          <button onClick={this.onFinishTurn}>Finish Turn</button>
           {this.props.activeUnit.id && this.renderActiveUnit()}
         </div>
 

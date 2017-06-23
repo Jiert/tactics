@@ -1,12 +1,14 @@
-import {combineReducers} from 'redux';
+import move from './move';
+import turn from './turn';
 import units from './units';
 import activeUnit from './activeUnit';
 import unitsByLocation from './units-by-location';
-import move from './move';
+import {combineReducers} from 'redux';
 
 const battleApp = combineReducers({
-  units,
   move,
+  turn,
+  units,
   activeUnit,
   unitsByLocation
 })

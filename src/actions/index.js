@@ -47,3 +47,9 @@ export const setAttackingUnit = id => {
     payload: id
   }
 }
+
+export const finishTurn = id => {
+  return {
+    type: 'FINISH_TURN'
+  }
+}
