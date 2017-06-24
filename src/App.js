@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
+import io from 'socket.io-client';
 import {
   addUnit, 
   finishTurn,
@@ -36,6 +37,8 @@ class App extends Component {
     this.onOtherClick = this.onOtherClick.bind(this);
     this.onFinishTurn = this.onFinishTurn.bind(this);
 
+    this.io = io('http://localhost:8080');
+
     this.state = {
       boardHeight: 20,
       boardWidth: 30,
@@ -71,6 +74,8 @@ class App extends Component {
   }
 
   onFinishTurn() {
+    // debugger;
+    this.io.emit('turn', 'monkey');
     this.props.finishTurn();
   }
 
