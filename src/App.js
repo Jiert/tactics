@@ -31,32 +31,71 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    // Note: to Support Multiple sessions, 
+    // We could use a query param to id different games
+
     this.onMove = this.onMove.bind(this);
     this.onClick = this.onClick.bind(this);
     this.onAttack = this.onAttack.bind(this);
     this.onOtherClick = this.onOtherClick.bind(this);
     this.onFinishTurn = this.onFinishTurn.bind(this);
+    this.onPlayer = this.onPlayer.bind(this);
 
+    // Maybe we can do all this again in another component
+    // and if that works ... 
     this.io = io('http://localhost:8080');
 
+    this.io.on('players', players => {
+      // TODO: I think we should put players in redux, but for now
+      this.setState({players})
+
+      console.log('player: ', this.player)
+      console.log(players)
+    });
+
+    this.io.on('playerAdded', player => {
+      if (player === this.state.player) {
+        // TODO: Not sure "connected" is the correct term here
+        this.setState({connected: true}) 
+        console.log('connected')
+      }
+    });
+
+    // TESTING (wooot, this works)
+    // So how can we share this.io
+    this.io.on('addUnit', unit => {
+      this.props.addUnit(unit);
+      this.props.setUnitLocation(unit.id, {x: 7, y: 2})
+    })
+
+
+    this.io.on('error', error => {
+      console.log(error);
+    });
+
+    // TODO: Put player, connected in react-redux
     this.state = {
       boardHeight: 20,
       boardWidth: 30,
+      connected: false,
+      players: [],
+      player: null
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    // TODO: Create a menu component and remove all this
-    if (!isEqual(this.props.activeUnit.id, nextProps.activeUnit.id)) {
-      return true;
-    }
-    return false;
-  }
+  // TODO: Account for players, player, etc from sockets
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // TODO: Create a menu component and remove all this
+  //   if (!isEqual(this.props.activeUnit.id, nextProps.activeUnit.id)) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   onClick() {
     const warrior1 = createNewWarrior();
-    this.props.addUnit(warrior1);
-    this.props.setUnitLocation(warrior1.id, {x: 7, y: 2})
+
+    this.io.emit('addUnit', warrior1);
   }
 
   onOtherClick() {
@@ -74,9 +113,16 @@ class App extends Component {
   }
 
   onFinishTurn() {
-    // debugger;
-    this.io.emit('turn', 'monkey');
+    this.io.emit('turn', 'turn');
     this.props.finishTurn();
+  }
+
+  onPlayer() {
+    const player = new Date().toISOString()
+
+    this.setState({player}, () => {
+      this.io.emit('player', this.state.player)
+    })
   }
 
   renderActiveUnit() {
@@ -95,6 +141,26 @@ class App extends Component {
     );
   }
 
+  renderPlayerButton() {
+    if (this.state.players.length < 2) {
+      return <button onClick={this.onPlayer}>New Player</button>;
+    }
+    return null;
+  }
+
+  renderGameButtons() {
+    if (this.state.player && this.state.connected) {
+      return (
+        <div>
+          <button onClick={this.onClick}>New Warrior</button>
+          <button onClick={this.onOtherClick}>New Castle</button>
+          <button onClick={this.onFinishTurn}>Finish Turn</button>
+        </div>
+      );
+    }
+    return null;
+  }
+
   render() {
     console.log('app render')
 
@@ -107,9 +173,10 @@ class App extends Component {
         />
 
         <div className="app-menu">
-          <button onClick={this.onClick}>New Warrior</button>
-          <button onClick={this.onOtherClick}>New Castle</button>
-          <button onClick={this.onFinishTurn}>Finish Turn</button>
+
+          {this.renderGameButtons()}
+          {this.renderPlayerButton()}
+          
           {this.props.activeUnit.id && this.renderActiveUnit()}
         </div>
 

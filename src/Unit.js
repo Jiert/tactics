@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
+import io from 'socket.io-client';
 import {
-  addUnit,
+  // addUnit,
   updateUnit,
   setActiveUnit,
   setUnitLocation,
@@ -17,7 +18,7 @@ const mapStateToProps = state => ({
 
 // TODO: Not sure about these dispatch patterns
 const mapDispatchToProps = dispatch => ({
-  addUnit: unit => dispatch(addUnit(unit)),
+  // addUnit: unit => dispatch(addUnit(unit)),
   updateUnit: (id, updates) => dispatch(updateUnit(id, updates)),
   setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
   setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
@@ -35,6 +36,12 @@ class Unit extends Component {
     super(props);
     
     this.onClick = this.onClick.bind(this);
+
+    this.io = io('http://localhost:8080');
+
+    this.io.on('setActiveUnit', (unitId, location) => {
+      this.props.setActiveUnit(unitId, location);
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -89,7 +96,8 @@ class Unit extends Component {
     ) {
       this.battle();
     } else {
-      this.props.setActiveUnit(this.props.unit.id, this.props.location);
+      this.io.emit('setActiveUnit', this.props.unit.id, this.props.location);
+      // this.props.setActiveUnit(this.props.unit.id, this.props.location);
     }
   }
 

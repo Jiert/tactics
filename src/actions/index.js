@@ -1,5 +1,6 @@
 
 export const addUnit = unit => {
+  console.log('addUnit called ', unit)
   return {
     type: 'ADD_UNIT',
     payload: unit
