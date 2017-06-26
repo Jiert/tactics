@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {
-  setUnitLocation, 
   setDestinationIntent, 
   setMoveMode, 
   setActiveUnit} from './actions';
@@ -20,7 +19,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),
   setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
-  setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
   setDestinationIntent: location => dispatch(setDestinationIntent(location))
 });
 
@@ -31,9 +29,6 @@ class Square extends Component {
     this.onClick = this.onClick.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
-
-    // console.log(this.context)
-
 
     this.state = {
       unit: null,
@@ -88,8 +83,6 @@ class Square extends Component {
     })
   }
 
-
-
   shouldComponentUpdate(nextProps, nextState) {
     const nextUnit = this.getUnit(nextProps);
 
@@ -106,6 +99,7 @@ class Square extends Component {
     return false;
   }
 
+  // TODO: This should be on the prototype or a standalone function
   inRange(props, state) {
     if (!props.unitMoving || !props.activeUnit.location) return false;
 

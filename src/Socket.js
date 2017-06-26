@@ -6,13 +6,15 @@ import io from 'socket.io-client';
 import {
   addUnit, 
   finishTurn,
+  updateUnit,
   setUnitLocation, 
 } from './actions';
 
 const mapDispatchToProps = dispatch => ({
   addUnit: (unit, location) => dispatch(addUnit(unit, location)),
   setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
-  finishTurn: () => dispatch(finishTurn())
+  finishTurn: () => dispatch(finishTurn()),
+  updateUnit: (id, updates) => dispatch(updateUnit(id, updates))
 })
 
 
@@ -37,7 +39,12 @@ class Socket extends Component {
 
     this.io.on('setUnitLocation', (unitId, location) => {
       this.props.setUnitLocation(unitId, location)
-    });  
+    });
+
+    this.io.on('updateUnit', (unitId, props) => {
+      console.log('do we get here?')
+      this.props.updateUnit(unitId, props)
+    })
   }
 
   getChildContext() {
