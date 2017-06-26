@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {
   setUnitLocation, 
@@ -31,6 +32,9 @@ class Square extends Component {
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
 
+    // console.log(this.context)
+
+
     this.state = {
       unit: null,
       key: `${props.square.x}.${props.square.y}`,
@@ -60,15 +64,17 @@ class Square extends Component {
     ) {
 
       // 1. Remove the unit at this location
-      this.props.setUnitLocation(null, this.state.location)
+      this.context.io.emit('setUnitLocation', null, this.state.location)
 
       // 2. Move the unit to the new place (at some point we'll need to make sure it's successful)
-      this.props.setUnitLocation(nextProps.activeUnit.id, nextProps.intendedDestination)
+      this.context.io.emit('setUnitLocation', nextProps.activeUnit.id, nextProps.intendedDestination)
 
       // 3. Since we're using the active Unit here, we need to update it's location
+      // We don't need to emit this one becuase the other player doesn't see the active unit
       this.props.setActiveUnit(nextProps.activeUnit.id, nextProps.intendedDestination);
 
-      // 4. Null out intent, moving, 
+      // 4. Null out intent, moving,
+      // no need to emit 
       this.props.setDestinationIntent(null);
       this.props.setMoveMode(false);
     }
@@ -150,7 +156,7 @@ class Square extends Component {
       classes += " hover"
     }
 
-    console.log('square render with unit: ', this.state.unit)
+    // console.log('square render with unit: ', this.state.unit)
 
     return (
       <div 
@@ -167,5 +173,10 @@ class Square extends Component {
     );
   }
 }
+
+Square.contextTypes = {
+  io: PropTypes.object
+};
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Square);

@@ -96,8 +96,8 @@ class Unit extends Component {
     ) {
       this.battle();
     } else {
-      this.io.emit('setActiveUnit', this.props.unit.id, this.props.location);
-      // this.props.setActiveUnit(this.props.unit.id, this.props.location);
+      // Don't' thik we want to emit here
+      this.props.setActiveUnit(this.props.unit.id, this.props.location);
     }
   }
 
