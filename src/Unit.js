@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import io from 'socket.io-client';
 import {
-  // addUnit,
-  updateUnit,
   setActiveUnit,
-  setUnitLocation,
   setAttackingUnit
 } from './actions';
 
@@ -18,13 +15,9 @@ const mapStateToProps = state => ({
 
 // TODO: Not sure about these dispatch patterns
 const mapDispatchToProps = dispatch => ({
-  // addUnit: unit => dispatch(addUnit(unit)),
-  updateUnit: (id, updates) => dispatch(updateUnit(id, updates)),
   setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
-  setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
   setAttackingUnit: id => dispatch(setAttackingUnit(id))
 })
-
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -58,7 +51,9 @@ class Unit extends Component {
     console.log('I regret nothing')
 
     // 1: Set (or delete) this unit's id from the location map
-    this.props.setUnitLocation(null, this.props.location)
+    // TODO: emit
+    console.log('not dying becuase you haven\'t wired up perish to emit yet')
+    // this.props.setUnitLocation(null, this.props.location)
 
     // 2: Profit? Is that all?
   }
@@ -74,9 +69,10 @@ class Unit extends Component {
 
     console.log('Random: ', random, 'newHealth: ', newHealth)
 
-    this.props.updateUnit(this.props.unit.id, {
-      health: newHealth
-    })
+    // TODO: Emit:
+    // this.props.updateUnit(this.props.unit.id, {
+      // health: newHealth
+    // })
 
     this.props.setAttackingUnit(null);
   }
