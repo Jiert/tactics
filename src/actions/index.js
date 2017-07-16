@@ -1,4 +1,13 @@
 
+export const updateState = state => {
+  console.log('updateState called')
+  return {
+    type: 'SOCKET_STATE',
+    payload: state
+  }
+}
+
+
 export const addUnit = unit => {
   console.log('addUnit called ', unit)
   return {

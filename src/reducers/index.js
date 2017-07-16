@@ -13,4 +13,14 @@ const battleApp = combineReducers({
   unitsByLocation
 })
 
-export default battleApp;
+const rootReducer = (state, action) => { 
+  if (action.type === 'SOCKET_STATE') {
+    const newState = {...state, ...action.payload};
+
+    return battleApp(newState, action);
+  }
+
+  return battleApp(state, action);
+}
+
+export default rootReducer;

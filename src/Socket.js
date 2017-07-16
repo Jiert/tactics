@@ -4,15 +4,11 @@ import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 
 import {
-  addUnit, 
-  finishTurn,
-  setUnitLocation, 
+  updateState,
 } from './actions';
 
 const mapDispatchToProps = dispatch => ({
-  addUnit: (unit, location) => dispatch(addUnit(unit, location)),
-  setUnitLocation: (id, location) => dispatch(setUnitLocation(id, location)),
-  finishTurn: () => dispatch(finishTurn())
+  updateState: state => dispatch(updateState(state))
 })
 
 
@@ -22,22 +18,15 @@ class Socket extends Component {
   
     this.io = io('http://localhost:8080');
 
-    this.configureListeners();
+    this.io.on('change', state => {
+      this.props.updateState(state);
+    })
+
+    this.io.emit('getState');
   }
 
   shouldComponentUpdate() {
     return false;
-  }
-
-  configureListeners() {
-    this.io.on('addUnit', (unit, location) => {
-      this.props.addUnit(unit);
-      this.props.setUnitLocation(unit.id, location)
-    });
-
-    this.io.on('setUnitLocation', (unitId, location) => {
-      this.props.setUnitLocation(unitId, location)
-    });  
   }
 
   getChildContext() {
