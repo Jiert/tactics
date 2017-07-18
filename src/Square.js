@@ -83,8 +83,6 @@ class Square extends Component {
     })
   }
 
-
-
   shouldComponentUpdate(nextProps, nextState) {
     const nextUnit = this.getUnit(nextProps);
 
@@ -101,6 +99,7 @@ class Square extends Component {
     return false;
   }
 
+  // TODO: This should be on the prototype or a standalone function
   inRange(props, state) {
     if (!props.unitMoving || !props.activeUnit.location) return false;
 

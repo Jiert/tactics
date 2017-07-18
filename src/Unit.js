@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import io from 'socket.io-client';
 import {
+  updateUnit,
   setActiveUnit,
   setAttackingUnit
 } from './actions';
@@ -29,12 +30,6 @@ class Unit extends Component {
     super(props);
     
     this.onClick = this.onClick.bind(this);
-
-    this.io = io('http://localhost:8080');
-
-    this.io.on('setActiveUnit', (unitId, location) => {
-      this.props.setActiveUnit(unitId, location);
-    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,9 +46,13 @@ class Unit extends Component {
     console.log('I regret nothing')
 
     // 1: Set (or delete) this unit's id from the location map
+
     // TODO: emit
     console.log('not dying becuase you haven\'t wired up perish to emit yet')
     // this.props.setUnitLocation(null, this.props.location)
+
+    // this needs to be an emit
+    // this.context.io.emit('setUnitLocation', null, this.props.location
 
     // 2: Profit? Is that all?
   }
@@ -69,10 +68,16 @@ class Unit extends Component {
 
     console.log('Random: ', random, 'newHealth: ', newHealth)
 
+
     // TODO: Emit:
     // this.props.updateUnit(this.props.unit.id, {
       // health: newHealth
     // })
+
+    // this.context.io.emit('updateUnit', this.props.unit.id, {
+    //   health: newHealth
+    // })
+
 
     this.props.setAttackingUnit(null);
   }
@@ -125,5 +130,9 @@ class Unit extends Component {
     )
   }
 }
+
+Unit.contextTypes = {
+  io: PropTypes.object
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Unit);

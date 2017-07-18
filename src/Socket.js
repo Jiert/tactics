@@ -3,14 +3,11 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 
-import {
-  updateState,
-} from './actions';
+import {updateState} from './actions';
 
 const mapDispatchToProps = dispatch => ({
   updateState: state => dispatch(updateState(state))
 })
-
 
 class Socket extends Component {
   constructor(props) {
