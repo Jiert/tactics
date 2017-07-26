@@ -43,16 +43,8 @@ class Unit extends Component {
   }
 
   perish() {
-    console.log('I regret nothing')
-
     // 1: Set (or delete) this unit's id from the location map
-
-    // TODO: emit
-    console.log('not dying becuase you haven\'t wired up perish to emit yet')
-    // this.props.setUnitLocation(null, this.props.location)
-
-    // this needs to be an emit
-    // this.context.io.emit('setUnitLocation', null, this.props.location
+    this.context.io.emit('setUnitLocation', null, this.props.location);
 
     // 2: Profit? Is that all?
   }
@@ -68,16 +60,9 @@ class Unit extends Component {
 
     console.log('Random: ', random, 'newHealth: ', newHealth)
 
-
-    // TODO: Emit:
-    // this.props.updateUnit(this.props.unit.id, {
-      // health: newHealth
-    // })
-
-    // this.context.io.emit('updateUnit', this.props.unit.id, {
-    //   health: newHealth
-    // })
-
+    this.context.io.emit('updateUnit', this.props.unit.id, {
+      health: newHealth
+    })
 
     this.props.setAttackingUnit(null);
   }
@@ -86,7 +71,6 @@ class Unit extends Component {
     event.stopPropagation();
 
     // NOTE: will need to think about teams here
-
     // NOTE: Attacking unit information seems useless, but attacking unit 
     // may not always be the active unit (for the enemny, or player 2)
 
