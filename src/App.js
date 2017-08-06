@@ -1,11 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import io from 'socket.io-client';
-
+import React, {Component} from 'react';
 import Socket from './Socket';
-import Squares from './Squares';
-import Menu from './Menu';
+import Game from './Game';
 
 import './App.css';
 
@@ -13,34 +8,67 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
-    // Note: to Support Multiple sessions, 
-    // We could use a query param to id different games
-
+    
     this.state = {
-      boardHeight: 20,
-      boardWidth: 30,
+      userName: '',
+      userId: null
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentWillMount() {
+    try {
+      const tactics = localStorage.tactics;
+      const localState = tactics && JSON.parse(tactics);
+
+      if (localStorage) {
+        this.setState(localState)
+      }
+    } catch (error) {
+      //
     }
   }
 
-  render() {
-    console.log('app render')
+  handleChange(event) {
+    this.setState({userName: event.target.value});
+  }
 
+  getId() {
+    return `${Math.random () * 100000000000000000}`;
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    this.setState({
+      userId: this.getId()
+    }, () => {
+      localStorage.setItem('tactics', JSON.stringify(this.state))
+    });
+  }
+
+  renderIntro() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+
+  render() {
     return (
       <div className="App">
         <Socket>
-          <Squares 
-            boardHeight={this.state.boardHeight} 
-            boardWidth={this.state.boardWidth} 
-          />
-          <Menu />
+          {this.state.userId ? <Game />  : this.renderIntro()}
         </Socket>
       </div>
     );
   }
-}
+};
 
 export default App;
-
-
-// export default connect(mapStateToProps, mapDispatchToProps)(App);

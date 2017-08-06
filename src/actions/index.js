@@ -35,4 +35,9 @@ export const setAttackingUnit = id => {
   }
 }
 
+export const addPlayer = player => ({
+  type: 'ADD_PLAYER',
+  payload: player
+});
+
 // Hmm... we probably will need Turn here

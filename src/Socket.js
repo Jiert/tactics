@@ -22,10 +22,6 @@ class Socket extends Component {
     this.io.emit('getState');
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
   getChildContext() {
     return {io: this.io};
   }
