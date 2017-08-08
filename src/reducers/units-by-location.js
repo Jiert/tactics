@@ -1,3 +1,3 @@
-const unitsByLocation = (state = {}, action) => state;
+const unitsByLocation = (state = {}) => state;
 
 export default unitsByLocation;

@@ -1,3 +1,3 @@
-const units = (state = {}, action) => state;
+const units = (state = {}) => state;
 
 export default units;
