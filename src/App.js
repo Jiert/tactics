@@ -1,74 +1,78 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import Socket from './Socket';
+import Intro from './Intro';
 import Game from './Game';
+import {addCommander, addOpponent} from './actions';
+import isEqual from 'lodash.isequal';
 
 import './App.css';
 
-class App extends Component {
+const mapStateToProps = state => ({
+  commander: state.commander,
+  opponent: state.opponent,
+  players: state.players
+})
 
+const mapDispatchToProps = dispatch => ({
+  addCommander: commander => dispatch(addCommander(commander)),
+  addOpponent: opponent => dispatch(addOpponent(opponent))
+});
+
+class App extends Component {
   constructor(props) {
     super(props);
     
-    this.state = {
-      userName: '',
-      userId: null
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.playersReady = this.playersReady.bind(this);
+    this.setOpponent = this.setOpponent.bind(this);
   }
 
   componentWillMount() {
     try {
       const tactics = localStorage.tactics;
-      const localState = tactics && JSON.parse(tactics);
+      const commander = tactics && JSON.parse(tactics);
 
-      if (localStorage) {
-        this.setState(localState)
+      if (commander) {
+        this.props.addCommander(commander);
       }
     } catch (error) {
-      //
+      console.error(error);
     }
   }
 
-  handleChange(event) {
-    this.setState({userName: event.target.value});
+  setOpponent(props) {
+    const playerIds = Object.keys(props.players);
+
+    playerIds.forEach(id => {
+      if (id !== this.props.commander.id) {
+        this.props.addOpponent(props.players[id])
+      }
+    })
   }
 
-  getId() {
-    return `${Math.random () * 100000000000000000}`;
+  componentWillReceiveProps(nextProps) {
+    // This is totally lame, but we're doing it for now 2 players only
+    // TODO: a better way to manage opponents
+    if (!isEqual(nextProps.players, this.props.players)) {
+      this.setOpponent(nextProps);
+    }
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-    this.setState({
-      userId: this.getId()
-    }, () => {
-      localStorage.setItem('tactics', JSON.stringify(this.state))
-    });
-  }
-
-  renderIntro() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    );
+  playersReady() {
+    return this.props.commander.id && this.props.opponent.id;
   }
 
   render() {
     return (
       <div className="App">
         <Socket>
-          {this.state.userId ? <Game />  : this.renderIntro()}
+          {this.playersReady() 
+            ? <Game />  
+            : <Intro />}
         </Socket>
       </div>
     );
   }
 };
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
