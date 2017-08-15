@@ -10,8 +10,9 @@ import './App.css';
 
 const mapStateToProps = state => ({
   commander: state.commander,
+  connected: state.connected,
   opponent: state.opponent,
-  players: state.players
+  players: state.players,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -31,7 +32,6 @@ class App extends Component {
     try {
       const tactics = localStorage.tactics;
       const commander = tactics && JSON.parse(tactics);
-
       if (commander) {
         this.props.addCommander(commander);
       }
@@ -66,7 +66,7 @@ class App extends Component {
     return (
       <div className="App">
         <Socket>
-          {this.playersReady() 
+          {this.props.connected && this.playersReady() 
             ? <Game />  
             : <Intro />}
         </Socket>

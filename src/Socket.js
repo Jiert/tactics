@@ -3,10 +3,12 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 
-import {updateState} from './actions';
+import {updateState, ioDisconnect, ioConnect} from './actions';
 
 const mapDispatchToProps = dispatch => ({
-  updateState: state => dispatch(updateState(state))
+  updateState: state => dispatch(updateState(state)),
+  connect: state => dispatch(ioConnect()),
+  disconnect: state => dispatch(ioDisconnect())
 })
 
 class Socket extends Component {
@@ -17,6 +19,16 @@ class Socket extends Component {
 
     this.io.on('change', state => {
       this.props.updateState(state);
+    })
+
+    this.io.on('connect', () => {
+      console.log('server connected')
+      this.props.connect();
+    })
+
+    this.io.on('disconnect', () => {
+      this.props.disconnect();
+      delete localStorage.tactics;
     })
 
     this.io.emit('getState');

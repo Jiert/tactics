@@ -12,7 +12,8 @@ class Intro extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
-      name: ''
+      name: '',
+      submitted: false
     };
   }
 
@@ -39,6 +40,7 @@ class Intro extends Component {
 
     try {
       localStorage.setItem('tactics', JSON.stringify(commander))
+      this.setState({submitted: true})
     } catch (error) {
       console.error()
     }
@@ -46,15 +48,23 @@ class Intro extends Component {
   }
 
   render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <input type="text" value={this.state.name} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    );
+    if (this.props.connected) {
+      if (this.state.submitted) {
+        return <p>Waiting for players</p>;
+      }
+
+      return (
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Name:
+            <input type="text" value={this.state.name} onChange={this.handleChange} />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
+      );
+    } 
+
+    return <p>Not connected to server</p>
   }
 }
 
@@ -62,8 +72,12 @@ Intro.contextTypes = {
   io: PropTypes.object
 };
 
+const mapStateToProps = state => ({
+  connected: state.connected
+})
+
 const mapDispatchToProps = dispatch => ({
   addCommander: commander => dispatch(addCommander(commander))
 });
 
-export default connect(null, mapDispatchToProps)(Intro);
+export default connect(mapStateToProps, mapDispatchToProps)(Intro);

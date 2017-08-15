@@ -45,4 +45,12 @@ export const addOpponent = opponent => ({
   payload: opponent
 });
 
+export const ioConnect = () => ({
+  type: 'SERVER_CONNECT'
+})
+
+export const ioDisconnect = () => ({
+  type: 'SERVER_DISCONNECT'
+})
+
 // Hmm... we probably will need Turn here

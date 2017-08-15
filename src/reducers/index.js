@@ -4,6 +4,7 @@ import units from './units';
 import players from './players';
 import opponent from './opponent';
 import commander from './commander';
+import connected from './connected';
 import activeUnit from './activeUnit';
 import unitsByLocation from './units-by-location';
 import {combineReducers} from 'redux';
@@ -15,6 +16,7 @@ const battleApp = combineReducers({
   players,
   opponent,
   commander,
+  connected,
   activeUnit,
   unitsByLocation
 })
@@ -24,6 +26,10 @@ const rootReducer = (state, action) => {
     const newState = {...state, ...action.payload};
 
     return battleApp(newState, action);
+  }
+
+  if (action.type === 'SERVER_DISCONNECT') {
+    state = undefined;
   }
 
   return battleApp(state, action);
