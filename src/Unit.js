@@ -11,7 +11,8 @@ const mapStateToProps = state => ({
   units: state.units,
   activeUnit: state.activeUnit,
   attackingUnitId: state.move.attackingUnitId,
-  unitsByLocation: state.unitsByLocation
+  unitsByLocation: state.unitsByLocation,
+  commanderId: state.commander.id
 });
 
 // TODO: Not sure about these dispatch patterns
@@ -102,6 +103,15 @@ class Unit extends Component {
       this.props.unit.id === this.props.activeUnit.id
     ) {
       classes += " active";
+    }
+
+    if (
+      this.props.unit &&
+      this.props.unit.commanderId === this.props.commanderId
+    ) {
+      classes += " friendly";
+    } else {
+      classes += " hostile";
     }
 
     return(

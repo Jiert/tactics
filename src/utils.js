@@ -1,10 +1,11 @@
-export const createNewWarrior = () => ({
+export const createNewWarrior = commanderId => ({
   id: new Date().toISOString(),
   name: 'Warrior',
   maxHealth: 10,
   health: 10,
   mobility: 2,
-  symbol: '⚔'
+  symbol: '⚔',
+  commanderId
 })
 
 export const createNewCastle = () => ({

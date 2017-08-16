@@ -6,7 +6,8 @@ import {createNewWarrior, createNewCastle} from './utils';
 
 const mapStateToProps = state => ({
   units: state.units,
-  activeUnit: state.activeUnit
+  activeUnit: state.activeUnit,
+  commanderId: state.commander.id
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -30,7 +31,7 @@ class Menu extends Component {
 
   onWarrior() {
     const location = {x: 7, y: 2}
-    const warrior = createNewWarrior();
+    const warrior = createNewWarrior(this.props.commanderId);
 
     this.context.io.emit('addUnit', warrior, location);
   }
