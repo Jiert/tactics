@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {
   updateUnit,
+  setMoveMode,
   setActiveUnit,
   setAttackingUnit
 } from './actions';
@@ -12,13 +13,15 @@ const mapStateToProps = state => ({
   activeUnit: state.activeUnit,
   attackingUnitId: state.move.attackingUnitId,
   unitsByLocation: state.unitsByLocation,
-  commanderId: state.commander.id
+  commanderId: state.commander.id,
+  unitMoving: state.move.mode
 });
 
 // TODO: Not sure about these dispatch patterns
 const mapDispatchToProps = dispatch => ({
+  setMoveMode: bool => dispatch(setMoveMode(bool)),
+  setAttackingUnit: id => dispatch(setAttackingUnit(id)),
   setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
-  setAttackingUnit: id => dispatch(setAttackingUnit(id))
 })
 
 const getRandomInt = (min, max) => {
@@ -31,16 +34,13 @@ class Unit extends Component {
     super(props);
     
     this.onClick = this.onClick.bind(this);
+    this.shouldBattle = this.shouldBattle.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.unit.health > 0 && nextProps.unit.health <= 0) {
       this.perish();
     }
-  }
-
-  componentWillUnmount() {
-    console.log('goodbye!')
   }
 
   perish() {
@@ -59,13 +59,20 @@ class Unit extends Component {
     const random = getRandomInt(1, this.props.unit.maxHealth / 2);
     const newHealth = this.props.unit.health - random;
 
-    console.log('Random: ', random, 'newHealth: ', newHealth)
-
     this.context.io.emit('updateUnit', this.props.unit.id, {
       health: newHealth
     })
 
     this.props.setAttackingUnit(null);
+  }
+
+  shouldBattle() {
+    return (
+      this.props.unit &&
+      this.props.attackingUnitId &&
+      this.props.attackingUnitId !== this.props.unit.id &&
+      this.props.unit.commanderId !== this.props.commanderId
+    )
   }
 
   onClick(event) {
@@ -75,20 +82,29 @@ class Unit extends Component {
     // NOTE: Attacking unit information seems useless, but attacking unit 
     // may not always be the active unit (for the enemny, or player 2)
 
+    // Can't move to a square that has a unit
+    if (this.props.unitMoving) {
+      return;
+    }
+
+    // If a unit is attacking, it can't attack a unit on its own team
     if (
-      this.props.unit &&
-      this.props.attackingUnitId &&
-      this.props.attackingUnitId !== this.props.unit.id
+      this.props.attackingUnitId && 
+      this.props.unit.commanderId === this.props.commanderId
     ) {
+      return;
+    }
+
+    if (this.shouldBattle()) {
       this.battle();
     } else if (this.props.unit.commanderId === this.props.commanderId) {
+      this.props.setMoveMode(false);
+      this.props.setAttackingUnit(null);
       this.props.setActiveUnit(this.props.unit.id, this.props.location);
     }
   }
 
   render() {
-    console.log('unit render')
-
     const percent = (this.props.unit.health / this.props.unit.maxHealth) * 100;
     const healthStyle = {
       width: `${percent}%`

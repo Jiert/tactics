@@ -59,6 +59,12 @@ class Square extends Component {
       !isEqual(nextProps.intendedDestination, this.location)
     ) {
 
+      // TODO: decrement the unit's move
+      // we need to determine the range
+
+      // TODO: we also need to make sure you can't move here if
+      // there's already a unit 
+
       // 1. Remove the unit at this location
       this.context.io.emit('setUnitLocation', null, this.location)
 
@@ -73,6 +79,7 @@ class Square extends Component {
       // no need to emit 
       this.props.setDestinationIntent(null);
       this.props.setMoveMode(false);
+
     }
 
     const unit = this.getUnit(nextProps);
