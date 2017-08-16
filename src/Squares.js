@@ -21,8 +21,6 @@ class Squares extends Component {
   }
 
   render() {
-    console.log('squares render')
-
     const boardStyles = {
       height: 50 * this.props.boardHeight,
       width: 50 * this.props.boardWidth

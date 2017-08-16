@@ -23,6 +23,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class Square extends Component {
+  // bug here
   constructor(props) {
     super(props);
     
@@ -30,20 +31,21 @@ class Square extends Component {
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
 
+    this.key = `${props.square.x}.${props.square.y}`;
+    this.location = {
+      x: props.square.x,
+      y: props.square.y
+    };
+
     this.state = {
-      unit: null,
-      key: `${props.square.x}.${props.square.y}`,
+      unit: this.getUnit(props),
       hover: false,
       hightlight: false,
-      location: {
-        x: props.square.x,
-        y: props.square.y
-      }
     }
   }
 
   getUnit(props) {
-    const unitId = props.unitsByLocation && props.unitsByLocation[this.state.key];
+    const unitId = props.unitsByLocation && props.unitsByLocation[this.key];
     const unit = props.units[unitId];
 
     return unit || null;
@@ -55,11 +57,11 @@ class Square extends Component {
       nextProps.unitMoving &&
       nextProps.activeUnit.id === this.state.unit.id &&
       nextProps.intendedDestination &&
-      !isEqual(nextProps.intendedDestination, this.state.location)
+      !isEqual(nextProps.intendedDestination, this.location)
     ) {
 
       // 1. Remove the unit at this location
-      this.context.io.emit('setUnitLocation', null, this.state.location)
+      this.context.io.emit('setUnitLocation', null, this.location)
 
       // 2. Move the unit to the new place (at some point we'll need to make sure it's successful)
       this.context.io.emit('setUnitLocation', nextProps.activeUnit.id, nextProps.intendedDestination)
@@ -91,7 +93,7 @@ class Square extends Component {
       (nextUnit && this.state.unit && !isEqual(this.state.unit, nextUnit)) ||
       this.state.hover !== nextState.hover ||
       this.inRange(nextProps, nextState) ||
-      this.props.unitsByLocation[this.state.key] !== nextProps.unitsByLocation[nextState.key] ||
+      this.props.unitsByLocation[this.key] !== nextProps.unitsByLocation[this.key] ||
       (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
     ) {
       return true;
@@ -108,8 +110,8 @@ class Square extends Component {
     const movement = props.units[props.activeUnit.id].mobility; 
 
     // both x AND y have to be less than movement
-    const xValid = Math.abs(state.location.x - movingUnitLocation.x) <= movement
-    const yValid = Math.abs(state.location.y - movingUnitLocation.y) <= movement
+    const xValid = Math.abs(this.location.x - movingUnitLocation.x) <= movement
+    const yValid = Math.abs(this.location.y - movingUnitLocation.y) <= movement
     
     return xValid && yValid;
   }
@@ -117,7 +119,7 @@ class Square extends Component {
   onClick(event) {
     if (this.props.unitMoving) {
       if (this.inRange(this.props, this.state)) {
-        this.props.setDestinationIntent(this.state.location)  
+        this.props.setDestinationIntent(this.location)  
       } else {
         return
       }
@@ -160,7 +162,7 @@ class Square extends Component {
           {this.props.square.x}
           {this.props.square.y}
         </span>
-        {this.state.unit && <Unit unit={this.state.unit} location={this.state.location} />}
+        {this.state.unit && <Unit unit={this.state.unit} location={this.location} />}
       </div>
     );
   }

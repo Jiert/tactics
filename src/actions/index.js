@@ -47,10 +47,8 @@ export const addOpponent = opponent => ({
 
 export const ioConnect = () => ({
   type: 'SERVER_CONNECT'
-})
+});
 
 export const ioDisconnect = () => ({
   type: 'SERVER_DISCONNECT'
-})
-
-// Hmm... we probably will need Turn here
+});
