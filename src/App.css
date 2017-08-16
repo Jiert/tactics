@@ -29,7 +29,7 @@
 }
 
 .hover {
- background: rgba(134, 234, 116, 0.60);   
+  background: rgba(134, 234, 116, 0.60);
 }
 
 .square span {
@@ -51,7 +51,7 @@
 }
 
 .unit.hostile {
-    box-shadow: inset 0 0 0px 2px red;
+  box-shadow: inset 0 0 0px 2px red;
 }
 
 .unit:hover {
@@ -72,7 +72,7 @@
   background: #25bf25;
 }
 
-.active {
+.unit.active {
   box-shadow: inset 0 0 0px 2px rgb(255, 238, 37);
 }
 

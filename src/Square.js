@@ -23,7 +23,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class Square extends Component {
-  // bug here
   constructor(props) {
     super(props);
     

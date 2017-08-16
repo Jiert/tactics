@@ -81,8 +81,7 @@ class Unit extends Component {
       this.props.attackingUnitId !== this.props.unit.id
     ) {
       this.battle();
-    } else {
-      // Don't' thik we want to emit here
+    } else if (this.props.unit.commanderId === this.props.commanderId) {
       this.props.setActiveUnit(this.props.unit.id, this.props.location);
     }
   }
