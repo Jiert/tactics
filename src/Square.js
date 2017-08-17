@@ -7,6 +7,7 @@ import {
   setActiveUnit} from './actions';
 import Unit from './Unit';
 import isEqual from 'lodash.isequal';
+import {distanceMoved} from './utils';
 
 const mapStateToProps = state => ({
   intendedDestination: state.move.intendedDestination,
@@ -59,23 +60,24 @@ class Square extends Component {
       !isEqual(nextProps.intendedDestination, this.location)
     ) {
 
-      // TODO: decrement the unit's move
-      // we need to determine the range
+      // 1. update the unit's movesLeft property
+      const moved = distanceMoved(this.location, nextProps.intendedDestination);
 
-      // TODO: we also need to make sure you can't move here if
-      // there's already a unit 
+      this.context.io.emit('updateUnit', this.state.unit.id, {
+        movesLeft: this.state.unit.mobility - moved
+      })
 
-      // 1. Remove the unit at this location
+      // 2. Remove the unit at this location
       this.context.io.emit('setUnitLocation', null, this.location)
 
-      // 2. Move the unit to the new place (at some point we'll need to make sure it's successful)
+      // 3. Move the unit to the new place (at some point we'll need to make sure it's successful)
       this.context.io.emit('setUnitLocation', nextProps.activeUnit.id, nextProps.intendedDestination)
 
-      // 3. Since we're using the active Unit here, we need to update it's location
+      // 4. Since we're using the active Unit here, we need to update it's location
       // We don't need to emit this one becuase the other player doesn't see the active unit
       this.props.setActiveUnit(nextProps.activeUnit.id, nextProps.intendedDestination);
 
-      // 4. Null out intent, moving,
+      // 5. Null out intent, moving,
       // no need to emit 
       this.props.setDestinationIntent(null);
       this.props.setMoveMode(false);
