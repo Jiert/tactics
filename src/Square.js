@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import styled from 'styled-components';
+
 import {
   setDestinationIntent, 
   setMoveMode, 
@@ -22,6 +24,31 @@ const mapDispatchToProps = dispatch => ({
   setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
   setDestinationIntent: location => dispatch(setDestinationIntent(location))
 });
+
+const backgroundColor = props => {
+  if (props.hover && !props.unit) {
+    return 'rgba(134, 234, 116, 0.60)';
+  }
+
+  if (props.highlight) {
+    return 'rgba(134, 234, 116, 0.30)'; 
+  }
+
+  return 'rgba(134, 234, 116, 0.17)';
+}
+
+const Wrapper = styled.div`
+  background: ${props => backgroundColor(props)};  
+  height: 50px;
+  width: 50px;
+  box-shadow: inset 1px 1px 0px 0px rgb(255, 255, 255), inset -1px -1px 0px rgba(187, 187, 187, 0.37);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    display: none;
+  }
+`;
 
 class Square extends Component {
   constructor(props) {
@@ -149,28 +176,21 @@ class Square extends Component {
   }
 
   render() {
-    let classes = "square";
-
-    if (this.state.highlight) {
-      classes += " highlight"
-    }
-
-    if (this.state.hover && !this.state.unit) {
-      classes += " hover"
-    }
-
     return (
-      <div 
-        className={classes}
+      <Wrapper 
         onClick={this.onClick} 
         onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}>
+        onMouseLeave={this.onMouseLeave}
+        highlight={this.state.highlight}
+        hover={this.state.hover}
+        unit={this.state.unit}
+      >
         <span>
           {this.props.square.x}
           {this.props.square.y}
         </span>
         {this.state.unit && <Unit unit={this.state.unit} location={this.location} />}
-      </div>
+      </Wrapper>
     );
   }
 }

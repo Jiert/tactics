@@ -7,8 +7,6 @@ import Intro from './intro';
 import Game from './game';
 import {addCommander, addOpponent} from './actions';
 
-import './app.css';
-
 const mapStateToProps = state => ({
   commander: state.commander,
   connected: state.connected,

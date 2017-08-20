@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import styled from 'styled-components';
 import {setAttackingUnit, setMoveMode} from './actions';
 import {createNewWarrior, createNewCastle} from './utils';
 
@@ -16,6 +17,15 @@ const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),
   setAttackingUnit: id => dispatch(setAttackingUnit(id))
 })
+
+const Wrapper = styled.div`
+  height: 180px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: #ddd;
+  width: 300px;
+`;
 
 class Menu extends Component {
   constructor(props) {
@@ -94,10 +104,10 @@ class Menu extends Component {
 
   render() {
     return (
-      <div className="app-menu">
+      <Wrapper>
         {this.renderGameButtons()}
         {this.props.activeUnit.id && this.renderActiveUnit()}
-      </div>
+      </Wrapper>
     );
   }
 }
