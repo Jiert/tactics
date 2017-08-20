@@ -78,7 +78,6 @@ class Square extends Component {
       this.props.setActiveUnit(nextProps.activeUnit.id, nextProps.intendedDestination);
 
       // 5. Null out intent, moving,
-      // no need to emit 
       this.props.setDestinationIntent(null);
       this.props.setMoveMode(false);
 

@@ -7,15 +7,15 @@ import {createNewWarrior, createNewCastle} from './utils';
 const mapStateToProps = state => ({
   units: state.units,
   activeUnit: state.activeUnit,
-  commanderId: state.commander.id
+  commanderId: state.commander.id,
+  opponentId: state.opponent.id,
+  activePlayer: state.activePlayer === state.commander.id
 });
 
 const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),
   setAttackingUnit: id => dispatch(setAttackingUnit(id))
 })
-
-// NOTE: this can be a dumb component at this point
 
 class Menu extends Component {
   constructor(props) {
@@ -26,7 +26,6 @@ class Menu extends Component {
     this.onAttack = this.onAttack.bind(this);
     this.onCastle = this.onCastle.bind(this);
     this.onFinishTurn = this.onFinishTurn.bind(this);
-    this.onPlayer = this.onPlayer.bind(this);
   }
 
   onWarrior() {
@@ -44,26 +43,15 @@ class Menu extends Component {
   }
 
   onMove() {
-    // I don't think we need to emit this one
     this.props.setMoveMode(true);
   }
 
   onAttack() {
-    // I don't think we need to emit here either
     this.props.setAttackingUnit(this.props.activeUnit.id);
   }
 
   onFinishTurn() {
-    // this.io.emit('turn', 'turn');
-    // this.props.finishTurn();
-  }
-
-  onPlayer() {
-    // const player = new Date().toISOString()
-
-    // this.setState({player}, () => {
-      // this.io.emit('player', this.state.player)
-    // })
+    this.context.io.emit('setActivePlayer', this.props.opponentId);
   }
 
   renderActiveUnit() {
@@ -76,21 +64,22 @@ class Menu extends Component {
           <li>Id: {unit.id}</li>
           <li>Health: {unit.health} / {unit.maxHealth}</li>
         </ul>
-        <button onClick={this.onMove}>Move</button>
-        <button onClick={this.onAttack}>Attack</button>
+        {this.props.activePlayer && this.renderActiveUnitButtons()}
       </div>
     );
   }
 
-  renderPlayerButton() {
-    // if (this.state.players.length < 2) {
-      return <button onClick={this.onPlayer}>New Player</button>;
-    // }
-    // return null;
+  renderActiveUnitButtons() {
+    return (
+      <div>
+        <button onClick={this.onMove}>Move</button>
+        <button onClick={this.onAttack}>Attack</button>
+      </div>
+    )
   }
 
   renderGameButtons() {
-    // if (this.state.player && this.state.connected) {
+    if (this.props.activePlayer) {
       return (
         <div>
           <button onClick={this.onWarrior}>New Warrior</button>
@@ -98,15 +87,15 @@ class Menu extends Component {
           <button onClick={this.onFinishTurn}>Finish Turn</button>
         </div>
       );
-    // }
-    // return null;
+    }
+
+    return <p>Waiting for opponent to finish turn</p>
   }
 
   render() {
     return (
       <div className="app-menu">
         {this.renderGameButtons()}
-        {this.renderPlayerButton()}
         {this.props.activeUnit.id && this.renderActiveUnit()}
       </div>
     );

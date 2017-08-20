@@ -21,16 +21,12 @@ class Intro extends Component {
     this.setState({name: event.target.value});
   }
 
-  getId() {
-    return `${Math.random() * 100000000000000000}`;
-  }
-
   handleSubmit(event) {
     event.preventDefault();
 
     const commander = {
       name: this.state.name,
-      id: this.getId()      
+      id: JSON.stringify(Date.now())
     }
 
     // TODO: These 3 need to all be in a promise chain
