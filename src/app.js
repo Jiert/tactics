@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
+import styled from 'styled-components';
 
 import Socket from './socket';
 import Intro from './intro';
@@ -18,6 +19,10 @@ const mapDispatchToProps = dispatch => ({
   addCommander: commander => dispatch(addCommander(commander)),
   addOpponent: opponent => dispatch(addOpponent(opponent))
 });
+
+const Wrapper = styled.div`
+  font-family: sans-serif;
+`;
 
 class App extends Component {
   constructor(props) {
@@ -63,13 +68,13 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <Wrapper>
         <Socket>
           {this.props.connected && this.playersReady() 
             ? <Game />  
             : <Intro />}
         </Socket>
-      </div>
+      </Wrapper>
     );
   }
 };
