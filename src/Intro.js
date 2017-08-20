@@ -26,7 +26,8 @@ class Intro extends Component {
 
     const commander = {
       name: this.state.name,
-      id: JSON.stringify(Date.now())
+      id: JSON.stringify(Date.now()),
+      color: this.props.firstPlayer ? 'red' : 'blue'
     }
 
     // TODO: These 3 need to all be in a promise chain
@@ -69,6 +70,7 @@ Intro.contextTypes = {
 };
 
 const mapStateToProps = state => ({
+  firstPlayer: Object.keys(state.players).length == 0,
   connected: state.connected
 })
 

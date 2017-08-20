@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import styled from 'styled-components';
 import {
   updateUnit,
   setMoveMode,
@@ -8,16 +9,17 @@ import {
   setAttackingUnit
 } from './actions';
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps)=> ({
   units: state.units,
   activeUnit: state.activeUnit,
+  active: state.activeUnit && state.activeUnit.id === ownProps.unit.id,
   attackingUnitId: state.move.attackingUnitId,
   unitsByLocation: state.unitsByLocation,
   commanderId: state.commander.id,
-  unitMoving: state.move.mode
+  unitMoving: state.move.mode,
+  color: state.players[ownProps.unit.commanderId].color
 });
 
-// TODO: Not sure about these dispatch patterns
 const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),
   setAttackingUnit: id => dispatch(setAttackingUnit(id)),
@@ -28,8 +30,38 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-class Unit extends Component {
+const healthPercent = props => props.unit.health / props.unit.maxHealth * 100;
 
+const Wrapper = styled.div`
+  font-size: 30px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  &:hover {
+    cursor: pointer;
+  }
+  box-shadow: ${props => props.active 
+    ? 'inset 0 0 0px 2px rgb(255, 238, 37)'
+    : props => `inset 0 0 0px 2px ${props.color}`}
+`;
+
+const HealthContainer = styled.div`
+  position: absolute;
+  top: 3px;
+  left: 10px;
+  right: 10px;
+`;
+
+const Health = styled.div`
+  height: 3px;
+  width: ${props => healthPercent(props)}%;
+  background: #25bf25;
+`;
+
+class Unit extends Component {
   constructor(props) {
     super(props);
     
@@ -66,11 +98,13 @@ class Unit extends Component {
     this.props.setAttackingUnit(null);
   }
 
+  // TODO: pull this out of the class
   shouldBattle() {
     return (
       this.props.unit &&
       this.props.attackingUnitId &&
       this.props.attackingUnitId !== this.props.unit.id &&
+      // TODO: This is as clear as MUD, maybe?
       this.props.unit.commanderId !== this.props.commanderId
     )
   }
@@ -105,39 +139,23 @@ class Unit extends Component {
   }
 
   render() {
-    const percent = (this.props.unit.health / this.props.unit.maxHealth) * 100;
-    const healthStyle = {
-      width: `${percent}%`
-    }
-
-    let classes = "unit";
-
-    if (
-      this.props.unit && 
-      this.props.activeUnit && 
-      this.props.unit.id === this.props.activeUnit.id
-    ) {
-      classes += " active";
-    }
-
-    if (
-      this.props.unit &&
-      this.props.unit.commanderId === this.props.commanderId
-    ) {
-      classes += " friendly";
-    } else {
-      classes += " hostile";
-    }
-
     return(
-      <div className={classes} onClick={this.onClick}>
-        <div className="unit-health-container">
-          <div className="unit-health" style={healthStyle}></div>
-        </div>
+      <Wrapper
+        onClick={this.onClick}
+        active={this.props.active}
+        color={this.props.color}
+      >
+        <HealthContainer>
+          <Health unit={this.props.unit} />
+        </HealthContainer>
         {this.props.unit.symbol}
-      </div>
+      </Wrapper>
     )
   }
+}
+
+Unit.propTypes = {
+  unit: PropTypes.object.isRequired
 }
 
 Unit.contextTypes = {
