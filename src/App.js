@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import Socket from './Socket';
-import Intro from './Intro';
-import Game from './Game';
-import {addCommander, addOpponent} from './actions';
 import isEqual from 'lodash.isequal';
 
-import './App.css';
+import Socket from './socket';
+import Intro from './intro';
+import Game from './game';
+import {addCommander, addOpponent} from './actions';
+
+import './app.css';
 
 const mapStateToProps = state => ({
   commander: state.commander,

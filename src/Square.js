@@ -5,7 +5,7 @@ import {
   setDestinationIntent, 
   setMoveMode, 
   setActiveUnit} from './actions';
-import Unit from './Unit';
+import Unit from './unit';
 import isEqual from 'lodash.isequal';
 import {distanceMoved} from './utils';
 

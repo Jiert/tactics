@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Squares from './Squares';
-import Menu from './Menu';
+import Squares from './squares';
+import Menu from './menu';
 
 class Game extends Component {
 

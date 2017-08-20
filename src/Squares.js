@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Square from './Square';
+import Square from './square';
 
 const getSquares = (height, width) => {
   const squares = [];
