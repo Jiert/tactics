@@ -5,27 +5,34 @@ import styled from 'styled-components';
 import {setAttackingUnit, setMoveMode} from './actions';
 import {createNewWarrior, createNewCastle} from './utils';
 
-const mapStateToProps = state => ({
-  units: state.units,
-  activeUnit: state.activeUnit,
-  commanderId: state.commander.id,
-  opponentId: state.opponent.id,
-  activePlayer: state.activePlayer === state.commander.id
-});
-
-const mapDispatchToProps = dispatch => ({
-  setMoveMode: bool => dispatch(setMoveMode(bool)),
-  setAttackingUnit: id => dispatch(setAttackingUnit(id))
-})
-
 const Wrapper = styled.div`
-  height: 180px;
+  align-items: flex-end;
+  display: flex;
+  justify-content: center;
   position: fixed;
   bottom: 0;
   right: 0;
-  background: #ddd;
-  width: 300px;
+  left: 0;
 `;
+
+const Column = styled.div`
+  box-shadow: 0 0 3px;
+  background: #ddd;
+  flex-basis: 27%;
+  padding: 15px;
+`;
+
+const SideColumn = styled(Column)`
+  
+`;
+
+const CenterColumn = styled(Column)`
+  z-index: 1;
+  h2, p {
+    text-align: center;
+  }
+`;
+
 
 class Menu extends Component {
   constructor(props) {
@@ -69,44 +76,46 @@ class Menu extends Component {
 
     return (
       <div>
-        <h2>{unit.name}</h2>
+        <h2>{unit.symbol} {unit.name}</h2>
         <ul>
-          <li>Id: {unit.id}</li>
           <li>Health: {unit.health} / {unit.maxHealth}</li>
+          <li>Mobility: {unit.mobility}</li>
+          <li>Available Moves: {unit.movesLeft}</li>
         </ul>
-        {this.props.activePlayer && this.renderActiveUnitButtons()}
       </div>
     );
   }
 
-  renderActiveUnitButtons() {
-    return (
-      <div>
-        <button onClick={this.onMove}>Move</button>
-        <button onClick={this.onAttack}>Attack</button>
-      </div>
-    )
-  }
-
-  renderGameButtons() {
-    if (this.props.activePlayer) {
-      return (
-        <div>
-          <button onClick={this.onWarrior}>New Warrior</button>
-          <button onClick={this.onCastle}>New Castle</button>
-          <button onClick={this.onFinishTurn}>Finish Turn</button>
-        </div>
-      );
-    }
-
-    return <p>Waiting for opponent to finish turn</p>
-  }
-
   render() {
+    const activePlayer = this.props.activePlayer;
+    const unitSelected = activePlayer && this.props.activeUnit.id;
+
     return (
       <Wrapper>
-        {this.renderGameButtons()}
-        {this.props.activeUnit.id && this.renderActiveUnit()}
+        <SideColumn>
+          <button onClick={this.onWarrior} disabled={!activePlayer}>
+            New Warrior
+          </button>
+          <button onClick={this.onCastle} disabled={!activePlayer}>
+            New Castle
+          </button>
+        </SideColumn>
+        <CenterColumn>
+          {unitSelected && this.renderActiveUnit()}
+          {activePlayer && !unitSelected && <p>It's your turn.</p>}
+          {!activePlayer && <p>Waiting for opponent...</p>}
+        </CenterColumn>
+        <SideColumn>
+          <button onClick={this.onMove} disabled={!unitSelected}>
+            Move
+          </button>
+          <button onClick={this.onAttack} disabled={!unitSelected}>
+            Attack
+          </button>
+          <button onClick={this.onFinishTurn} disabled={!activePlayer}>
+            Finish Turn
+          </button>
+        </SideColumn>
       </Wrapper>
     );
   }
@@ -115,5 +124,18 @@ class Menu extends Component {
 Menu.contextTypes = {
   io: PropTypes.object
 };
+
+const mapStateToProps = state => ({
+  units: state.units,
+  activeUnit: state.activeUnit,
+  commanderId: state.commander.id,
+  opponentId: state.opponent.id,
+  activePlayer: state.activePlayer === state.commander.id
+});
+
+const mapDispatchToProps = dispatch => ({
+  setMoveMode: bool => dispatch(setMoveMode(bool)),
+  setAttackingUnit: id => dispatch(setAttackingUnit(id))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Menu);
