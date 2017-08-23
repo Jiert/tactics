@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Square from './square';
 
@@ -43,5 +44,10 @@ class Squares extends Component {
     );
   }
 }
+
+Squares.propTypes = {
+  boardHeight: PropTypes.number.isRequired,
+  boardWidth: PropTypes.number.isRequired
+};
 
 export default Squares;

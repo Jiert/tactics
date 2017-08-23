@@ -1,5 +1,4 @@
 export const updateState = state => {
-  console.log('updateState called');
   return {
     type: 'SOCKET_STATE',
     payload: state

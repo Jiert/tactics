@@ -22,7 +22,6 @@ class Socket extends Component {
     });
 
     this.io.on('connect', () => {
-      console.log('server connected');
       this.props.connect();
     });
 
@@ -46,6 +45,13 @@ class Socket extends Component {
     );
   }
 }
+
+Socket.propTypes = {
+  children: PropTypes.object,
+  connect: PropTypes.func.isRequired,
+  disconnect: PropTypes.func.isRequired,
+  updateState: PropTypes.func.isRequired
+};
 
 Socket.childContextTypes = {
   io: PropTypes.object

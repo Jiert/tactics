@@ -1,9 +1,8 @@
 const turn = (state = 0, action) => {
   switch (action.type) {
-    case 'FINISH_TURN':
-      const turn = state + 1;
-
-      return turn;
+    case 'FINISH_TURN': {
+      return state + 1;
+    }
 
     default:
       return state;

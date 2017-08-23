@@ -8,20 +8,6 @@ import Unit from './unit';
 import isEqual from 'lodash.isequal';
 import {distanceMoved} from './utils';
 
-const mapStateToProps = state => ({
-  intendedDestination: state.move.intendedDestination,
-  activeUnit: state.activeUnit,
-  units: state.units,
-  unitsByLocation: state.unitsByLocation,
-  unitMoving: state.move.mode
-});
-
-const mapDispatchToProps = dispatch => ({
-  setMoveMode: bool => dispatch(setMoveMode(bool)),
-  setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location)),
-  setDestinationIntent: location => dispatch(setDestinationIntent(location))
-});
-
 const backgroundColor = props => {
   if (props.hover && !props.unit) {
     return 'rgba(134, 234, 116, 0.60)';
@@ -63,15 +49,16 @@ class Square extends Component {
     };
 
     this.state = {
-      unit: this.getUnit(props),
+      unit: this.getUnit(),
       hover: false,
       hightlight: false
     };
   }
 
-  getUnit(props) {
-    const unitId = props.unitsByLocation && props.unitsByLocation[this.key];
-    const unit = props.units[unitId];
+  getUnit() {
+    const unitId =
+      this.props.unitsByLocation && this.props.unitsByLocation[this.key];
+    const unit = this.props.units[unitId];
 
     return unit || null;
   }
@@ -205,5 +192,31 @@ class Square extends Component {
 Square.contextTypes = {
   io: PropTypes.object
 };
+
+Square.propTypes = {
+  intendedDestination: PropTypes.object,
+  activeUnit: PropTypes.object.isRequired,
+  units: PropTypes.object.isRequired,
+  unitsByLocation: PropTypes.object.isRequired,
+  unitMoving: PropTypes.bool.isRequired,
+  setMoveMode: PropTypes.func.isRequired,
+  setActiveUnit: PropTypes.func.isRequired,
+  setDestinationIntent: PropTypes.func.isRequired,
+  square: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  intendedDestination: state.move.intendedDestination,
+  activeUnit: state.activeUnit,
+  units: state.units,
+  unitsByLocation: state.unitsByLocation,
+  unitMoving: state.move.mode
+});
+
+const mapDispatchToProps = dispatch => ({
+  setMoveMode: bool => dispatch(setMoveMode(bool)),
+  setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location)),
+  setDestinationIntent: location => dispatch(setDestinationIntent(location))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Square);

@@ -109,7 +109,7 @@ class Menu extends Component {
         </SideColumn>
         <CenterColumn>
           {unitSelected && this.renderActiveUnit()}
-          {activePlayer && !unitSelected && <p>It's your turn.</p>}
+          {activePlayer && !unitSelected && <p>It is your turn.</p>}
           {!activePlayer && <p>Waiting for opponent...</p>}
         </CenterColumn>
         <SideColumn>
@@ -130,6 +130,16 @@ class Menu extends Component {
 
 Menu.contextTypes = {
   io: PropTypes.object
+};
+
+Menu.propTypes = {
+  activePlayer: PropTypes.bool.isRequired,
+  activeUnit: PropTypes.object.isRequired,
+  commanderId: PropTypes.string.isRequired,
+  opponentId: PropTypes.string.isRequired,
+  setMoveMode: PropTypes.func.isRequired,
+  setAttackingUnit: PropTypes.func.isRequired,
+  units: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

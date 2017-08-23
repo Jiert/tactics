@@ -38,7 +38,7 @@ class Intro extends Component {
       localStorage.setItem('tactics', JSON.stringify(commander));
       this.setState({submitted: true});
     } catch (error) {
-      console.error();
+      console.error(); // eslint-disable-line no-console
     }
   }
 
@@ -69,6 +69,12 @@ class Intro extends Component {
 
 Intro.contextTypes = {
   io: PropTypes.object
+};
+
+Intro.propTypes = {
+  addCommander: PropTypes.func.isRequired,
+  connected: PropTypes.bool.isRequired,
+  firstPlayer: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({

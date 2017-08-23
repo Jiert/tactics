@@ -2,29 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
-import {
-  updateUnit,
-  setMoveMode,
-  setActiveUnit,
-  setAttackingUnit
-} from './actions';
-
-const mapStateToProps = (state, ownProps) => ({
-  units: state.units,
-  activeUnit: state.activeUnit,
-  active: state.activeUnit && state.activeUnit.id === ownProps.unit.id,
-  attackingUnitId: state.move.attackingUnitId,
-  unitsByLocation: state.unitsByLocation,
-  commanderId: state.commander.id,
-  unitMoving: state.move.mode,
-  color: state.players[ownProps.unit.commanderId].color
-});
-
-const mapDispatchToProps = dispatch => ({
-  setMoveMode: bool => dispatch(setMoveMode(bool)),
-  setAttackingUnit: id => dispatch(setAttackingUnit(id)),
-  setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location))
-});
+import {setMoveMode, setActiveUnit, setAttackingUnit} from './actions';
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -156,11 +134,34 @@ class Unit extends Component {
 }
 
 Unit.propTypes = {
-  unit: PropTypes.object.isRequired
+  unit: PropTypes.object.isRequired,
+  active: PropTypes.bool.isRequired,
+  attackingUnitId: PropTypes.number,
+  commanderId: PropTypes.string.isRequired,
+  location: PropTypes.object.isRequired,
+  unitMoving: PropTypes.bool.isRequired,
+  color: PropTypes.string.isRequired,
+  setMoveMode: PropTypes.func.isRequired,
+  setAttackingUnit: PropTypes.func.isRequired,
+  setActiveUnit: PropTypes.func.isRequired
 };
 
 Unit.contextTypes = {
   io: PropTypes.object
 };
+
+const mapStateToProps = (state, ownProps) => ({
+  active: state.activeUnit && state.activeUnit.id === ownProps.unit.id,
+  attackingUnitId: state.move.attackingUnitId,
+  commanderId: state.commander.id,
+  unitMoving: state.move.mode,
+  color: state.players[ownProps.unit.commanderId].color
+});
+
+const mapDispatchToProps = dispatch => ({
+  setMoveMode: bool => dispatch(setMoveMode(bool)),
+  setAttackingUnit: id => dispatch(setAttackingUnit(id)),
+  setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Unit);

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components';
@@ -38,7 +39,7 @@ class App extends Component {
         this.props.addCommander(commander);
       }
     } catch (error) {
-      console.error(error);
+      console.error(error); //eslint-disable-line no-console
     }
   }
 
@@ -74,5 +75,14 @@ class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  addCommander: PropTypes.func.isRequired,
+  addOpponent: PropTypes.func.isRequired,
+  commander: PropTypes.object.isRequired,
+  connected: PropTypes.bool.isRequired,
+  players: PropTypes.object.isRequired,
+  opponent: PropTypes.object.isRequired
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
