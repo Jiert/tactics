@@ -12,22 +12,20 @@ const mapStateToProps = state => ({
   commander: state.commander,
   connected: state.connected,
   opponent: state.opponent,
-  players: state.players,
-})
+  players: state.players
+});
 
 const mapDispatchToProps = dispatch => ({
   addCommander: commander => dispatch(addCommander(commander)),
   addOpponent: opponent => dispatch(addOpponent(opponent))
 });
 
-const Wrapper = styled.div`
-  font-family: sans-serif;
-`;
+const Wrapper = styled.div`font-family: sans-serif;`;
 
 class App extends Component {
   constructor(props) {
     super(props);
-    
+
     this.playersReady = this.playersReady.bind(this);
     this.setOpponent = this.setOpponent.bind(this);
   }
@@ -49,9 +47,9 @@ class App extends Component {
 
     playerIds.forEach(id => {
       if (id !== this.props.commander.id) {
-        this.props.addOpponent(props.players[id])
+        this.props.addOpponent(props.players[id]);
       }
-    })
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -70,13 +68,11 @@ class App extends Component {
     return (
       <Wrapper>
         <Socket>
-          {this.props.connected && this.playersReady() 
-            ? <Game />  
-            : <Intro />}
+          {this.props.connected && this.playersReady() ? <Game /> : <Intro />}
         </Socket>
       </Wrapper>
     );
   }
-};
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
@@ -33,7 +33,6 @@ const CenterColumn = styled(Column)`
   }
 `;
 
-
 class Menu extends Component {
   constructor(props) {
     super(props);
@@ -46,14 +45,14 @@ class Menu extends Component {
   }
 
   onWarrior() {
-    const location = {x: 7, y: 2}
+    const location = {x: 7, y: 2};
     const warrior = createNewWarrior(this.props.commanderId);
 
     this.context.io.emit('addUnit', warrior, location);
   }
 
   onCastle() {
-    const location = {x: 7, y: 4}
+    const location = {x: 7, y: 4};
     const castle = createNewCastle();
 
     this.context.io.emit('addUnit', castle, location);
@@ -76,11 +75,19 @@ class Menu extends Component {
 
     return (
       <div>
-        <h2>{unit.symbol} {unit.name}</h2>
+        <h2>
+          {unit.symbol} {unit.name}
+        </h2>
         <ul>
-          <li>Health: {unit.health} / {unit.maxHealth}</li>
-          <li>Mobility: {unit.mobility}</li>
-          <li>Available Moves: {unit.movesLeft}</li>
+          <li>
+            Health: {unit.health} / {unit.maxHealth}
+          </li>
+          <li>
+            Mobility: {unit.mobility}
+          </li>
+          <li>
+            Available Moves: {unit.movesLeft}
+          </li>
         </ul>
       </div>
     );

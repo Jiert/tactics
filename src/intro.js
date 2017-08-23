@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 import {addCommander} from './actions';
 
 class Intro extends Component {
-
   constructor(props) {
     super(props);
-    
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -28,7 +27,7 @@ class Intro extends Component {
       name: this.state.name,
       id: JSON.stringify(Date.now()),
       color: this.props.firstPlayer ? 'red' : 'blue'
-    }
+    };
 
     // TODO: These 3 need to all be in a promise chain
     this.context.io.emit('submitPlayerRequest', commander);
@@ -36,12 +35,11 @@ class Intro extends Component {
     this.props.addCommander(commander);
 
     try {
-      localStorage.setItem('tactics', JSON.stringify(commander))
-      this.setState({submitted: true})
+      localStorage.setItem('tactics', JSON.stringify(commander));
+      this.setState({submitted: true});
     } catch (error) {
-      console.error()
+      console.error();
     }
-
   }
 
   render() {
@@ -54,14 +52,18 @@ class Intro extends Component {
         <form onSubmit={this.handleSubmit}>
           <label>
             Name:
-            <input type="text" value={this.state.name} onChange={this.handleChange} />
+            <input
+              type="text"
+              value={this.state.name}
+              onChange={this.handleChange}
+            />
           </label>
           <input type="submit" value="Submit" />
         </form>
       );
-    } 
+    }
 
-    return <p>Not connected to server</p>
+    return <p>Not connected to server</p>;
   }
 }
 
@@ -70,9 +72,9 @@ Intro.contextTypes = {
 };
 
 const mapStateToProps = state => ({
-  firstPlayer: Object.keys(state.players).length == 0,
+  firstPlayer: Object.keys(state.players).length === 0,
   connected: state.connected
-})
+});
 
 const mapDispatchToProps = dispatch => ({
   addCommander: commander => dispatch(addCommander(commander))

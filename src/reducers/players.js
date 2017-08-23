@@ -1,3 +1,3 @@
-const players = (state = {}) => state
+const players = (state = {}) => state;
 
 export default players;

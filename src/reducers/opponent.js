@@ -1,13 +1,12 @@
 const opponent = (state = {}, action) => {
-  switch (action.type) {  
+  switch (action.type) {
     case 'ADD_OPPONENT':
       // NOTE: This is set locally, and there can only be one
-      return {...action.payload}
-      
+      return {...action.payload};
 
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default opponent;

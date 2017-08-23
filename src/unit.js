@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import {
   setAttackingUnit
 } from './actions';
 
-const mapStateToProps = (state, ownProps)=> ({
+const mapStateToProps = (state, ownProps) => ({
   units: state.units,
   activeUnit: state.activeUnit,
   active: state.activeUnit && state.activeUnit.id === ownProps.unit.id,
@@ -23,12 +23,12 @@ const mapStateToProps = (state, ownProps)=> ({
 const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),
   setAttackingUnit: id => dispatch(setAttackingUnit(id)),
-  setActiveUnit: (id, location)=> dispatch(setActiveUnit(id, location)),
-})
+  setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location))
+});
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
-}
+};
 
 const healthPercent = props => props.unit.health / props.unit.maxHealth * 100;
 
@@ -43,9 +43,10 @@ const Wrapper = styled.div`
   &:hover {
     cursor: pointer;
   }
-  box-shadow: ${props => props.active 
-    ? 'inset 0 0 0px 2px rgb(255, 238, 37)'
-    : props => `inset 0 0 0px 2px ${props.color}`}
+  box-shadow: ${props =>
+    props.active
+      ? 'inset 0 0 0px 2px rgb(255, 238, 37)'
+      : props => `inset 0 0 0px 2px ${props.color}`};
 `;
 
 const HealthContainer = styled.div`
@@ -64,7 +65,7 @@ const Health = styled.div`
 class Unit extends Component {
   constructor(props) {
     super(props);
-    
+
     this.onClick = this.onClick.bind(this);
     this.shouldBattle = this.shouldBattle.bind(this);
   }
@@ -85,7 +86,7 @@ class Unit extends Component {
   battle() {
     // NOTE: Recall teh DND article
     // Units should probably have "hitPoints" or "attackPoints" to represent
-    // their baseline number for damage they can cause. 
+    // their baseline number for damage they can cause.
     // For now though, we'll just randomly halve the hit points
 
     const random = getRandomInt(1, this.props.unit.maxHealth / 2);
@@ -93,7 +94,7 @@ class Unit extends Component {
 
     this.context.io.emit('updateUnit', this.props.unit.id, {
       health: newHealth
-    })
+    });
 
     this.props.setAttackingUnit(null);
   }
@@ -106,14 +107,14 @@ class Unit extends Component {
       this.props.attackingUnitId !== this.props.unit.id &&
       // TODO: This is as clear as MUD, maybe?
       this.props.unit.commanderId !== this.props.commanderId
-    )
+    );
   }
 
   onClick(event) {
     event.stopPropagation();
 
     // NOTE: will need to think about teams here
-    // NOTE: Attacking unit information seems useless, but attacking unit 
+    // NOTE: Attacking unit information seems useless, but attacking unit
     // may not always be the active unit (for the enemny, or player 2)
 
     // Can't move to a square that has a unit
@@ -123,7 +124,7 @@ class Unit extends Component {
 
     // If a unit is attacking, it can't attack a unit on its own team
     if (
-      this.props.attackingUnitId && 
+      this.props.attackingUnitId &&
       this.props.unit.commanderId === this.props.commanderId
     ) {
       return;
@@ -139,7 +140,7 @@ class Unit extends Component {
   }
 
   render() {
-    return(
+    return (
       <Wrapper
         onClick={this.onClick}
         active={this.props.active}
@@ -150,13 +151,13 @@ class Unit extends Component {
         </HealthContainer>
         {this.props.unit.symbol}
       </Wrapper>
-    )
+    );
   }
 }
 
 Unit.propTypes = {
   unit: PropTypes.object.isRequired
-}
+};
 
 Unit.contextTypes = {
   io: PropTypes.object

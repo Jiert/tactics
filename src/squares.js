@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import styled from 'styled-components';
 import Square from './square';
 
@@ -16,27 +16,27 @@ const getSquares = (height, width) => {
 
   for (var y = height; y >= 1; y--) {
     for (var x = 1; x <= width; x++) {
-      squares.push({x, y})  
+      squares.push({x, y});
     }
   }
 
   return squares;
-}
+};
 
 class Squares extends Component {
   shouldComponentUpdate(nextProps, nextState) {
-    return false
+    return false;
   }
 
   render() {
-    const squares = getSquares(this.props.boardHeight, this.props.boardWidth)
+    const squares = getSquares(this.props.boardHeight, this.props.boardWidth);
 
     return (
       <Wrapper
         boardHeight={this.props.boardHeight}
         boardWidth={this.props.boardWidth}
       >
-        {squares.map(square => 
+        {squares.map(square =>
           <Square key={`${square.x}.${square.y}`} square={square} />
         )}
       </Wrapper>

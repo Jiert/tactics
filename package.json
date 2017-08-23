@@ -4,6 +4,9 @@
   "private": true,
   "homepage": "http://jaredeasterday.com/tactics/",
   "devDependencies": {
+    "eslint": "^4.5.0",
+    "eslint-config-planet": "^14.0.0",
+    "eslint-plugin-react": "^7.3.0",
     "gh-pages": "^1.0.0",
     "react-scripts": "1.0.7"
   },
@@ -18,11 +21,22 @@
     "styled-components": "^2.1.2"
   },
   "scripts": {
+    "lint": "eslint src",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": "planet/react",
+    "parserOptions": {
+      "ecmaVersion": "2017",
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+      }
+    }
   }
 }

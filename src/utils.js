@@ -8,7 +8,7 @@ export const createNewWarrior = commanderId => ({
   movesLeft: 2, // <- setting at 2 for testing
   symbol: '⚔',
   commanderId
-})
+});
 
 export const createNewCastle = commanderId => ({
   id: Date().now(),
@@ -18,11 +18,11 @@ export const createNewCastle = commanderId => ({
   mobility: 0,
   symbol: '🏰',
   commanderId
-})
+});
 
 export const distanceMoved = (prevLoc, currentLoc) => {
   const xDistance = Math.abs(prevLoc.x - currentLoc.x);
   const yDistance = Math.abs(prevLoc.y - currentLoc.y);
 
   return Math.max(xDistance, yDistance);
-}
+};

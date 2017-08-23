@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Squares from './squares';
 import Menu from './menu';
 
 class Game extends Component {
-
   constructor(props) {
     super(props);
-    
+
     this.state = {
       boardHeight: 20,
-      boardWidth: 30,
-    }
+      boardWidth: 30
+    };
   }
 
   componentWillMount() {
@@ -23,13 +22,13 @@ class Game extends Component {
   render() {
     return (
       <div>
-        <Squares 
-          boardHeight={this.state.boardHeight} 
-          boardWidth={this.state.boardWidth} 
+        <Squares
+          boardHeight={this.state.boardHeight}
+          boardWidth={this.state.boardWidth}
         />
         <Menu />
       </div>
-    )
+    );
   }
 }
 

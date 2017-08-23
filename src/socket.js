@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
@@ -9,27 +9,27 @@ const mapDispatchToProps = dispatch => ({
   updateState: state => dispatch(updateState(state)),
   connect: state => dispatch(ioConnect()),
   disconnect: state => dispatch(ioDisconnect())
-})
+});
 
 class Socket extends Component {
   constructor(props) {
     super(props);
-  
+
     this.io = io('http://localhost:8080');
 
     this.io.on('change', state => {
       this.props.updateState(state);
-    })
+    });
 
     this.io.on('connect', () => {
-      console.log('server connected')
+      console.log('server connected');
       this.props.connect();
-    })
+    });
 
     this.io.on('disconnect', () => {
       this.props.disconnect();
       delete localStorage.tactics;
-    })
+    });
 
     this.io.emit('getState');
   }
@@ -43,7 +43,7 @@ class Socket extends Component {
       <div>
         {this.props.children}
       </div>
-    )
+    );
   }
 }
 
