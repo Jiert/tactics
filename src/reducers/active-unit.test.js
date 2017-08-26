@@ -1,4 +1,4 @@
-import reducer from '../activeUnit'; // <- rename that file
+import reducer from './activeUnit'; // <- rename that file
 
 describe('accive-unit reducer', () => {
   it('returns default state', () => {

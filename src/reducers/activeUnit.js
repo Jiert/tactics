@@ -1,3 +1,4 @@
+// TODO: Rename this file
 const activeUnit = (state = {}, action) => {
   switch (action.type) {
     case 'SET_ACTIVE_UNIT':
