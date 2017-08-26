@@ -39,6 +39,9 @@
       "ecmaFeatures": {
         "experimentalObjectRestSpread": true
       }
+    },
+    "env": {
+      "jasmine": true
     }
   }
 }
