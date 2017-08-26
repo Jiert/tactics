@@ -49,16 +49,15 @@ class Square extends Component {
     };
 
     this.state = {
-      unit: this.getUnit(),
+      unit: this.getUnit(props),
       hover: false,
       hightlight: false
     };
   }
 
-  getUnit() {
-    const unitId =
-      this.props.unitsByLocation && this.props.unitsByLocation[this.key];
-    const unit = this.props.units[unitId];
+  getUnit(props) {
+    const unitId = props.unitsByLocation && props.unitsByLocation[this.key];
+    const unit = props.units[unitId];
 
     return unit || null;
   }
