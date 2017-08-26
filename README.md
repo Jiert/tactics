@@ -1,4 +1,6 @@
-#### Tactics 
+# Tactics 
+
+[![Build Status](https://travis-ci.org/Jiert/tactics.svg?branch=master)](https://travis-ci.org/Jiert/tactics)
 
 An experiment in creating a turn-based RPG similar to CIV, that focuses on military tactics.
 
