@@ -4,10 +4,12 @@
   "private": true,
   "homepage": "http://jaredeasterday.com/tactics/",
   "devDependencies": {
+    "babel-jest": "^20.0.3",
     "eslint": "^4.5.0",
     "eslint-config-planet": "^14.0.0",
     "eslint-plugin-react": "^7.3.0",
     "gh-pages": "^1.0.0",
+    "jest": "^20.0.4",
     "react-scripts": "1.0.7"
   },
   "dependencies": {

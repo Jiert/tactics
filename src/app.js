@@ -85,5 +85,4 @@ App.propTypes = {
   opponent: PropTypes.object.isRequired
 };
 
-export const app = App;
 export default connect(mapStateToProps, mapDispatchToProps)(App);
