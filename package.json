@@ -38,10 +38,10 @@
       "sourceType": "module",
       "ecmaFeatures": {
         "experimentalObjectRestSpread": true
+      },
+      "env": {
+        "jasmine": true
       }
-    },
-    "env": {
-      "jasmine": true
     }
   }
 }

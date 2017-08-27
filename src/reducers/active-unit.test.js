@@ -1,3 +1,4 @@
+/* eslint-env jest */
 import reducer from './activeUnit'; // <- rename that file
 
 describe('accive-unit reducer', () => {

@@ -4,8 +4,7 @@ export const createNewWarrior = commanderId => ({
   maxHealth: 10,
   health: 10,
   mobility: 2,
-  // movesLeft: 0,
-  movesLeft: 2, // <- setting at 2 for testing
+  movesLeft: 0,
   symbol: '⚔',
   commanderId
 });

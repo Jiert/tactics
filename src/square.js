@@ -74,7 +74,7 @@ class Square extends Component {
       const moved = distanceMoved(this.location, nextProps.intendedDestination);
 
       this.context.io.emit('updateUnit', this.state.unit.id, {
-        movesLeft: this.state.unit.mobility - moved
+        movesLeft: this.state.unit.movesLeft - moved
       });
 
       // 2. Remove the unit at this location
@@ -133,7 +133,7 @@ class Square extends Component {
 
     // at some point we'll have to pass in the moving unit's mobility prop, but for now
     const movingUnitLocation = props.activeUnit.location;
-    const movement = props.units[props.activeUnit.id].mobility;
+    const movement = props.units[props.activeUnit.id].movesLeft;
 
     // both x AND y have to be less than movement
     const xValid = Math.abs(this.location.x - movingUnitLocation.x) <= movement;
@@ -195,7 +195,6 @@ Square.contextTypes = {
 Square.propTypes = {
   intendedDestination: PropTypes.object,
   activeUnit: PropTypes.object.isRequired,
-  units: PropTypes.object.isRequired,
   unitsByLocation: PropTypes.object.isRequired,
   unitMoving: PropTypes.bool.isRequired,
   setMoveMode: PropTypes.func.isRequired,
