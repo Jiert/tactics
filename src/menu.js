@@ -42,6 +42,15 @@ class Menu extends Component {
     this.onAttack = this.onAttack.bind(this);
     this.onCastle = this.onCastle.bind(this);
     this.onFinishTurn = this.onFinishTurn.bind(this);
+    this.unitCanAct = this.unitCanAct.bind(this);
+  }
+
+  unitCanAct() {
+    return (
+      this.props.activePlayer &&
+      this.props.activeUnit &&
+      this.props.activeUnit.movesLeft
+    );
   }
 
   onWarrior() {
@@ -71,22 +80,21 @@ class Menu extends Component {
   }
 
   renderActiveUnit() {
-    const unit = this.props.units[this.props.activeUnit.id];
-
     return (
       <div>
         <h2>
-          {unit.symbol} {unit.name}
+          {this.props.activeUnit.symbol} {this.props.activeUnit.name}
         </h2>
         <ul>
           <li>
-            Health: {unit.health} / {unit.maxHealth}
+            Health: {this.props.activeUnit.health} /{' '}
+            {this.props.activeUnit.maxHealth}
           </li>
           <li>
-            Mobility: {unit.mobility}
+            Mobility: {this.props.activeUnit.mobility}
           </li>
           <li>
-            Available Moves: {unit.movesLeft}
+            Available Moves: {this.props.activeUnit.movesLeft}
           </li>
         </ul>
       </div>
@@ -94,32 +102,34 @@ class Menu extends Component {
   }
 
   render() {
-    const activePlayer = this.props.activePlayer;
-    const unitSelected = activePlayer && this.props.activeUnit.id;
-
     return (
       <Wrapper>
         <SideColumn>
-          <button onClick={this.onWarrior} disabled={!activePlayer}>
+          <button onClick={this.onWarrior} disabled={!this.props.activePlayer}>
             New Warrior
           </button>
-          <button onClick={this.onCastle} disabled={!activePlayer}>
+          <button onClick={this.onCastle} disabled={!this.props.activePlayer}>
             New Castle
           </button>
         </SideColumn>
         <CenterColumn>
-          {unitSelected && this.renderActiveUnit()}
-          {activePlayer && !unitSelected && <p>It is your turn.</p>}
-          {!activePlayer && <p>Waiting for opponent...</p>}
+          {this.props.activeUnit && this.renderActiveUnit()}
+          {this.props.activePlayer &&
+            !this.props.activeUnit &&
+            <p>It is your turn.</p>}
+          {!this.props.activePlayer && <p>Waiting for opponent...</p>}
         </CenterColumn>
         <SideColumn>
-          <button onClick={this.onMove} disabled={!unitSelected}>
+          <button onClick={this.onMove} disabled={!this.unitCanAct()}>
             Move
           </button>
-          <button onClick={this.onAttack} disabled={!unitSelected}>
+          <button onClick={this.onAttack} disabled={!this.unitCanAct()}>
             Attack
           </button>
-          <button onClick={this.onFinishTurn} disabled={!activePlayer}>
+          <button
+            onClick={this.onFinishTurn}
+            disabled={!this.props.activePlayer}
+          >
             Finish Turn
           </button>
         </SideColumn>
@@ -134,20 +144,19 @@ Menu.contextTypes = {
 
 Menu.propTypes = {
   activePlayer: PropTypes.bool.isRequired,
-  activeUnit: PropTypes.object.isRequired,
+  activeUnit: PropTypes.object,
   commanderId: PropTypes.string.isRequired,
   opponentId: PropTypes.string.isRequired,
   setMoveMode: PropTypes.func.isRequired,
-  setAttackingUnit: PropTypes.func.isRequired,
-  units: PropTypes.object.isRequired
+  setAttackingUnit: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   units: state.units,
-  activeUnit: state.activeUnit,
   commanderId: state.commander.id,
   opponentId: state.opponent.id,
-  activePlayer: state.activePlayer === state.commander.id
+  activePlayer: state.activePlayer === state.commander.id,
+  activeUnit: state.units[state.activeUnit.id]
 });
 
 const mapDispatchToProps = dispatch => ({
