@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 import {setAttackingUnit, setMoveMode} from './actions';
-import {createNewWarrior, createNewCastle} from './utils';
 
 const Wrapper = styled.div`
   align-items: flex-end;
@@ -22,13 +21,12 @@ const Column = styled.div`
   padding: 15px;
 `;
 
-const SideColumn = styled(Column)`
-  
-`;
+const SideColumn = styled(Column)``;
 
 const CenterColumn = styled(Column)`
   z-index: 1;
-  h2, p {
+  h2,
+  p {
     text-align: center;
   }
 `;
@@ -55,16 +53,14 @@ class Menu extends Component {
 
   onWarrior() {
     const location = {x: 7, y: 2};
-    const warrior = createNewWarrior(this.props.commanderId);
 
-    this.context.io.emit('addUnit', warrior, location);
+    this.context.io.emit('createWarrior', this.props.commanderId, location);
   }
 
   onCastle() {
     const location = {x: 7, y: 4};
-    const castle = createNewCastle();
 
-    this.context.io.emit('addUnit', castle, location);
+    this.context.io.emit('createNewCastle', this.props.commanderId, location);
   }
 
   onMove() {
@@ -90,33 +86,37 @@ class Menu extends Component {
             Health: {this.props.activeUnit.health} /{' '}
             {this.props.activeUnit.maxHealth}
           </li>
-          <li>
-            Mobility: {this.props.activeUnit.mobility}
-          </li>
-          <li>
-            Available Moves: {this.props.activeUnit.movesLeft}
-          </li>
+          <li>Mobility: {this.props.activeUnit.mobility}</li>
+          <li>Available Moves: {this.props.activeUnit.movesLeft}</li>
         </ul>
       </div>
     );
   }
 
   render() {
+    // Note: Temporarily removing the create buttons
+
     return (
       <Wrapper>
         <SideColumn>
-          <button onClick={this.onWarrior} disabled={!this.props.activePlayer}>
-            New Warrior
-          </button>
-          <button onClick={this.onCastle} disabled={!this.props.activePlayer}>
-            New Castle
-          </button>
+          {false && (
+            <button
+              onClick={this.onWarrior}
+              disabled={!this.props.activePlayer}
+            >
+              New Warrior
+            </button>
+          )}
+          {false && (
+            <button onClick={this.onCastle} disabled={!this.props.activePlayer}>
+              New Castle
+            </button>
+          )}
         </SideColumn>
         <CenterColumn>
           {this.props.activeUnit && this.renderActiveUnit()}
           {this.props.activePlayer &&
-            !this.props.activeUnit &&
-            <p>It is your turn.</p>}
+          !this.props.activeUnit && <p>It is your turn.</p>}
           {!this.props.activePlayer && <p>Waiting for opponent...</p>}
         </CenterColumn>
         <SideColumn>
