@@ -17,6 +17,10 @@ const backgroundColor = props => {
     return 'rgba(134, 234, 116, 0.30)';
   }
 
+  if (props.attackHighlight) {
+    return 'red';
+  }
+
   return 'rgba(134, 234, 116, 0.17)';
 };
 
@@ -39,8 +43,11 @@ class Square extends Component {
     super(props);
 
     this.onClick = this.onClick.bind(this);
+    this.moveUnit = this.moveUnit.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.unitHereShouldMove = this.unitHereShouldMove.bind(this);
+    this.inRangeOfAttack = this.inRangeOfAttack.bind(this);
 
     this.key = `${props.square.x}.${props.square.y}`;
     this.location = {
@@ -51,7 +58,7 @@ class Square extends Component {
     this.state = {
       unit: this.getUnit(props),
       hover: false,
-      hightlight: false
+      highlight: false
     };
   }
 
@@ -62,49 +69,93 @@ class Square extends Component {
     return unit || null;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (
+  unitHereShouldMove(props) {
+    return (
       this.state.unit &&
-      nextProps.unitMoving &&
-      nextProps.activeUnit.id === this.state.unit.id &&
-      nextProps.intendedDestination &&
-      !isEqual(nextProps.intendedDestination, this.location)
-    ) {
-      // 1. update the unit's movesLeft property
-      const moved = distanceMoved(this.location, nextProps.intendedDestination);
+      props.unitMoving &&
+      props.activeUnit.id === this.state.unit.id &&
+      props.intendedDestination &&
+      !isEqual(props.intendedDestination, this.location)
+    );
+  }
 
-      this.context.io.emit('updateUnit', this.state.unit.id, {
-        movesLeft: this.state.unit.movesLeft - moved
-      });
+  // TODO: Write a generic inrange function and a specific function that uses
+  // it for each of the types of rangtes (attack, move)
+  inRangeOfAttack(nextProps) {
+    /* NOTES: the purpose is to determine whether to highlight
+     * We highlight if we are in range of the attacking unit's location
+     * we can infer that the attackingUnitId equals the activeUnit's ID
+     * We don't need to share highlights with other user (local only)
+    */
 
-      // 2. Remove the unit at this location
-      this.context.io.emit('setUnitLocation', null, this.location);
+    // if there's no attacking unit, then there's no need to continue
+    if (!nextProps.attackingUnitId) {
+      return false;
+    }
 
-      // 3. Move the unit to the new place (at some point we'll need to make sure it's successful)
-      this.context.io.emit(
-        'setUnitLocation',
-        nextProps.activeUnit.id,
-        nextProps.intendedDestination
-      );
+    // If the attacking unit's id isn't the same as the
+    // active unit's id, something is fucked
+    if (nextProps.attackingUnitId !== this.props.activeUnit.id) {
+      return false;
+    }
 
-      // 4. Since we're using the active Unit here, we need to update it's location
-      // We don't need to emit this one becuase the other player doesn't see the active unit
-      this.props.setActiveUnit(
-        nextProps.activeUnit.id,
-        nextProps.intendedDestination
-      );
+    const attackingUnitLocation = this.props.activeUnit.location;
+    const attackRange = this.props.units[this.props.activeUnit.id].attackRange;
 
-      // 5. Null out intent, moving,
-      this.props.setDestinationIntent(null);
-      this.props.setMoveMode(false);
+    // both x AND y have to be less than attackRange
+    const xValid =
+      Math.abs(this.location.x - attackingUnitLocation.x) <= attackRange;
+    const yValid =
+      Math.abs(this.location.y - attackingUnitLocation.y) <= attackRange;
+
+    console.log('in range of attack');
+
+    return xValid && yValid;
+  }
+
+  moveUnit(props) {
+    // 1. update the unit's movesLeft property
+    const moved = distanceMoved(this.location, props.intendedDestination);
+
+    this.context.io.emit('updateUnit', this.state.unit.id, {
+      movesLeft: this.state.unit.movesLeft - moved
+    });
+
+    // 2. Remove the unit at this location
+    this.context.io.emit('setUnitLocation', null, this.location);
+
+    // 3. Move the unit to the new place (at some point we'll need to make sure it's successful)
+    this.context.io.emit(
+      'setUnitLocation',
+      props.activeUnit.id,
+      props.intendedDestination
+    );
+
+    // 4. Since we're using the active Unit here, we need to update it's location
+    // We don't need to emit this one becuase the other player doesn't see the active unit
+    this.props.setActiveUnit(props.activeUnit.id, props.intendedDestination);
+
+    // 5. Null out intent, moving,
+    this.props.setDestinationIntent(null);
+    this.props.setMoveMode(false);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // TODO: All of this logic is concerned with moving
+    // We need to clean this up and start implementing logic
+    // for attacking (if we want highlighting on empty squares for attack range)
+    if (this.unitHereShouldMove(nextProps)) {
+      this.moveUnit(nextProps);
     }
 
     const unit = this.getUnit(nextProps);
     const highlight = this.inRange(nextProps, this.state);
+    const attackHighlight = this.inRangeOfAttack(nextProps);
 
     this.setState({
       unit,
-      highlight
+      highlight,
+      attackHighlight
     });
   }
 
@@ -156,15 +207,15 @@ class Square extends Component {
 
   onMouseEnter(event) {
     // maybe we should check for a unit here too
-    if (this.state.highlight) {
+    if (this.state.highlight || this.state.attackHighlight) {
       this.setState({hover: true});
     }
   }
 
   onMouseLeave(event) {
-    if (this.state.hover) {
-      this.setState({hover: false});
-    }
+    // if (this.state.hover ) {
+    this.setState({hover: false});
+    // }
   }
 
   render() {
@@ -174,6 +225,7 @@ class Square extends Component {
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
         highlight={this.state.highlight}
+        attackHighlight={this.state.attackHighlight}
         hover={this.state.hover}
         unit={this.state.unit}
       >
@@ -181,8 +233,9 @@ class Square extends Component {
           {this.props.square.x}
           {this.props.square.y}
         </span>
-        {this.state.unit &&
-          <Unit unit={this.state.unit} location={this.location} />}
+        {this.state.unit && (
+          <Unit unit={this.state.unit} location={this.location} />
+        )}
       </Wrapper>
     );
   }
@@ -204,6 +257,7 @@ Square.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  attackingUnitId: state.move.attackingUnitId,
   intendedDestination: state.move.intendedDestination,
   activeUnit: state.activeUnit,
   units: state.units,

@@ -85,6 +85,7 @@ class Unit extends Component {
       this.props.attackingUnitId !== this.props.unit.id &&
       // TODO: This is as clear as MUD, maybe?
       this.props.unit.commanderId !== this.props.commanderId
+      // TODO: We need to check for range as well here
     );
   }
 
@@ -96,6 +97,7 @@ class Unit extends Component {
     // may not always be the active unit (for the enemny, or player 2)
 
     // Can't move to a square that has a unit
+    // TODO: Does ^ this make sense?
     if (this.props.unitMoving) {
       return;
     }
@@ -136,7 +138,7 @@ class Unit extends Component {
 Unit.propTypes = {
   unit: PropTypes.object.isRequired,
   active: PropTypes.bool.isRequired,
-  attackingUnitId: PropTypes.number,
+  attackingUnitId: PropTypes.string,
   commanderId: PropTypes.string.isRequired,
   location: PropTypes.object.isRequired,
   unitMoving: PropTypes.bool.isRequired,
