@@ -2,6 +2,7 @@ import move from './move';
 import turn from './turn';
 import units from './units';
 import players from './players';
+import squares from './squares';
 import opponent from './opponent';
 import commander from './commander';
 import connected from './connected';
@@ -15,6 +16,7 @@ const battleApp = combineReducers({
   turn,
   units,
   players,
+  squares,
   opponent,
   commander,
   connected,
