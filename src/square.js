@@ -11,19 +11,12 @@ import {
 } from './actions';
 import Unit from './unit';
 import isEqual from 'lodash.isequal';
-import {distanceMoved} from './utils';
+import {distanceMoved, inRange} from './utils';
 
 const darkGreen = 'rgba(134, 234, 116, 0.60)';
 const lightGreen = 'rgba(134, 234, 116, 0.17)';
 const mediumGreen = 'rgba(134, 234, 116, 0.30)';
 const attackRangeRed = '#ffe0e0';
-
-const inRange = (pointA, pointB, maxDistance) => {
-  const xValid = Math.abs(pointA.x - pointB.x) <= maxDistance;
-  const yValid = Math.abs(pointA.y - pointB.y) <= maxDistance;
-
-  return xValid && yValid;
-};
 
 const backgroundColor = props => {
   if (props.moving) {

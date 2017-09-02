@@ -3,12 +3,29 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 import {setMoveMode, setActiveUnit, setAttackingUnit} from './actions';
+import {inRange} from './utils';
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
 const healthPercent = props => props.unit.health / props.unit.maxHealth * 100;
+
+/*
+ * NOTE: So again, this is going to require that we assuem the attacking
+ * unit is the same as the active unit, and all of this logic happens locally.
+ * At some point it might be better to determine this on the server
+ * TODO: gotta rethink this pattern. Maybe we set all of the unit object active */
+const shouldBattle = props =>
+  props.unit &&
+  props.attackingUnitId &&
+  props.attackingUnitId !== props.unit.id &&
+  inRange(
+    props.location,
+    props.activeUnit.location,
+    props.units[props.activeUnit.id].attackRange
+  ) &&
+  props.unit.commanderId !== props.commanderId;
 
 const Wrapper = styled.div`
   font-size: 30px;
@@ -45,7 +62,6 @@ class Unit extends Component {
     super(props);
 
     this.onClick = this.onClick.bind(this);
-    this.shouldBattle = this.shouldBattle.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,18 +93,6 @@ class Unit extends Component {
     this.props.setAttackingUnit(null);
   }
 
-  // TODO: pull this out of the class
-  shouldBattle() {
-    return (
-      this.props.unit &&
-      this.props.attackingUnitId &&
-      this.props.attackingUnitId !== this.props.unit.id &&
-      // TODO: This is as clear as MUD, maybe?
-      this.props.unit.commanderId !== this.props.commanderId
-      // TODO: We need to check for range as well here
-    );
-  }
-
   onClick(event) {
     event.stopPropagation();
 
@@ -97,7 +101,8 @@ class Unit extends Component {
     // may not always be the active unit (for the enemny, or player 2)
 
     // Can't move to a square that has a unit
-    // TODO: Does ^ this make sense?
+    // TODO: Does ^ this make sense? <-- yes because this is a unit.
+    // Maybe someeday we will move to attack, but for now this makes sense.
     if (this.props.unitMoving) {
       return;
     }
@@ -110,7 +115,7 @@ class Unit extends Component {
       return;
     }
 
-    if (this.shouldBattle()) {
+    if (shouldBattle(this.props)) {
       this.battle();
     } else if (this.props.unit.commanderId === this.props.commanderId) {
       this.props.setMoveMode(false);
@@ -152,12 +157,15 @@ Unit.contextTypes = {
   io: PropTypes.object
 };
 
+// TODO: Let's see if we can cut down on the amount of props here
 const mapStateToProps = (state, ownProps) => ({
   active: state.activeUnit && state.activeUnit.id === ownProps.unit.id,
+  activeUnit: state.activeUnit,
   attackingUnitId: state.move.attackingUnitId,
   commanderId: state.commander.id,
   unitMoving: state.move.mode,
-  color: state.players[ownProps.unit.commanderId].color
+  color: state.players[ownProps.unit.commanderId].color,
+  units: state.units
 });
 
 const mapDispatchToProps = dispatch => ({

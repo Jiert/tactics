@@ -16,3 +16,10 @@ export const generateTerrain = () => {
     return '⛰';
   }
 };
+
+export const inRange = (pointA, pointB, maxDistance) => {
+  const xValid = Math.abs(pointA.x - pointB.x) <= maxDistance;
+  const yValid = Math.abs(pointA.y - pointB.y) <= maxDistance;
+
+  return xValid && yValid;
+};
