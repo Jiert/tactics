@@ -3,25 +3,43 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 
-import {setDestinationIntent, setMoveMode, setActiveUnit} from './actions';
+import {
+  setDestinationIntent,
+  setMoveMode,
+  setActiveUnit,
+  clearAttackingUnit
+} from './actions';
 import Unit from './unit';
 import isEqual from 'lodash.isequal';
 import {distanceMoved} from './utils';
 
-const backgroundColor = props => {
-  if (props.hover && !props.unit) {
-    return 'rgba(134, 234, 116, 0.60)';
-  }
+const darkGreen = 'rgba(134, 234, 116, 0.60)';
+const lightGreen = 'rgba(134, 234, 116, 0.17)';
+const mediumGreen = 'rgba(134, 234, 116, 0.30)';
+const attackRangeRed = '#ffe0e0';
 
-  if (props.highlight) {
-    return 'rgba(134, 234, 116, 0.30)';
+const inRange = (pointA, pointB, maxDistance) => {
+  const xValid = Math.abs(pointA.x - pointB.x) <= maxDistance;
+  const yValid = Math.abs(pointA.y - pointB.y) <= maxDistance;
+
+  return xValid && yValid;
+};
+
+const backgroundColor = props => {
+  if (props.moving) {
+    if (props.hover && !props.unit) {
+      return darkGreen;
+    }
+    if (props.highlight) {
+      return mediumGreen;
+    }
   }
 
   if (props.attackHighlight) {
-    return 'red';
+    return attackRangeRed;
   }
 
-  return 'rgba(134, 234, 116, 0.17)';
+  return lightGreen;
 };
 
 const Wrapper = styled.div`
@@ -82,14 +100,19 @@ class Square extends Component {
   // TODO: Write a generic inrange function and a specific function that uses
   // it for each of the types of rangtes (attack, move)
   inRangeOfAttack(nextProps) {
-    /* NOTES: the purpose is to determine whether to highlight
+    /* NOTES: the purpose is to determine whether to highlight this square.
      * We highlight if we are in range of the attacking unit's location
      * we can infer that the attackingUnitId equals the activeUnit's ID
      * We don't need to share highlights with other user (local only)
     */
 
-    // if there's no attacking unit, then there's no need to continue
+    // if there's no attacking unit, return
     if (!nextProps.attackingUnitId) {
+      return false;
+    }
+
+    // if the attacking unit is on this square, return
+    if (this.state.unit && this.state.unit.id === nextProps.attackingUnitId) {
       return false;
     }
 
@@ -102,15 +125,7 @@ class Square extends Component {
     const attackingUnitLocation = this.props.activeUnit.location;
     const attackRange = this.props.units[this.props.activeUnit.id].attackRange;
 
-    // both x AND y have to be less than attackRange
-    const xValid =
-      Math.abs(this.location.x - attackingUnitLocation.x) <= attackRange;
-    const yValid =
-      Math.abs(this.location.y - attackingUnitLocation.y) <= attackRange;
-
-    console.log('in range of attack');
-
-    return xValid && yValid;
+    return inRange(this.location, attackingUnitLocation, attackRange);
   }
 
   moveUnit(props) {
@@ -149,7 +164,7 @@ class Square extends Component {
     }
 
     const unit = this.getUnit(nextProps);
-    const highlight = this.inRange(nextProps, this.state);
+    const highlight = this.inMovingUnitsRange(nextProps);
     const attackHighlight = this.inRangeOfAttack(nextProps);
 
     this.setState({
@@ -166,9 +181,10 @@ class Square extends Component {
       (nextUnit && this.state.unit === null) ||
       (nextUnit && this.state.unit && !isEqual(this.state.unit, nextUnit)) ||
       this.state.hover !== nextState.hover ||
-      this.inRange(nextProps, nextState) ||
+      this.inMovingUnitsRange(nextProps) ||
       this.props.unitsByLocation[this.key] !==
         nextProps.unitsByLocation[this.key] ||
+      this.state.attackHighlight !== nextState.attackHighlight ||
       (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
     ) {
       return true;
@@ -177,30 +193,28 @@ class Square extends Component {
   }
 
   // TODO: This should be on the prototype or a standalone function
-  inRange(props, state) {
+  inMovingUnitsRange(props) {
     if (!props.unitMoving || !props.activeUnit.location) {
       return false;
     }
 
-    // at some point we'll have to pass in the moving unit's mobility prop, but for now
     const movingUnitLocation = props.activeUnit.location;
     const movement = props.units[props.activeUnit.id].movesLeft;
 
-    // both x AND y have to be less than movement
-    const xValid = Math.abs(this.location.x - movingUnitLocation.x) <= movement;
-    const yValid = Math.abs(this.location.y - movingUnitLocation.y) <= movement;
-
-    return xValid && yValid;
+    return inRange(this.location, movingUnitLocation, movement);
   }
 
   onClick(event) {
     if (this.props.unitMoving) {
-      if (this.inRange(this.props, this.state)) {
+      if (this.inMovingUnitsRange(this.props)) {
         this.props.setDestinationIntent(this.location);
       } else {
-        return;
+        this.props.setMoveMode(false);
       }
+    } else if (this.props.attackingUnitId) {
+      this.props.clearAttackingUnit();
     } else {
+      // TODO maybe do a check here instead of spamming
       this.props.setActiveUnit(null, null);
     }
   }
@@ -213,9 +227,9 @@ class Square extends Component {
   }
 
   onMouseLeave(event) {
-    // if (this.state.hover ) {
-    this.setState({hover: false});
-    // }
+    if (this.state.hover) {
+      this.setState({hover: false});
+    }
   }
 
   render() {
@@ -228,6 +242,7 @@ class Square extends Component {
         attackHighlight={this.state.attackHighlight}
         hover={this.state.hover}
         unit={this.state.unit}
+        moving={this.props.unitMoving}
       >
         <span>
           {this.props.square.x}
@@ -246,8 +261,11 @@ Square.contextTypes = {
 };
 
 Square.propTypes = {
+  clearAttackingUnit: PropTypes.func.isRequired,
+  attackingUnitId: PropTypes.string,
   intendedDestination: PropTypes.object,
   activeUnit: PropTypes.object.isRequired,
+  units: PropTypes.object.isRequired,
   unitsByLocation: PropTypes.object.isRequired,
   unitMoving: PropTypes.bool.isRequired,
   setMoveMode: PropTypes.func.isRequired,
@@ -256,6 +274,7 @@ Square.propTypes = {
   square: PropTypes.object.isRequired
 };
 
+// TODO: Think about how we can cut down on prop changes
 const mapStateToProps = state => ({
   attackingUnitId: state.move.attackingUnitId,
   intendedDestination: state.move.intendedDestination,
@@ -268,7 +287,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),
   setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location)),
-  setDestinationIntent: location => dispatch(setDestinationIntent(location))
+  setDestinationIntent: location => dispatch(setDestinationIntent(location)),
+  clearAttackingUnit: () => dispatch(clearAttackingUnit())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Square);
