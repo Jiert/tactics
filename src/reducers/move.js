@@ -3,7 +3,7 @@ const initialState = {
   intendedDestination: null,
   // maybe not the best place for this, but
   attackTarget: null,
-  attacking: false
+  attackingUnitId: null
 };
 
 const move = (state = initialState, action) => {
@@ -24,6 +24,12 @@ const move = (state = initialState, action) => {
       return {
         ...state,
         intendedDestination: action.payload
+      };
+
+    case 'CLEAR_ATTACKING_UNIT':
+      return {
+        ...state,
+        attackingUnitId: null
       };
 
     default:

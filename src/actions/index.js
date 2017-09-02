@@ -33,6 +33,12 @@ export const setAttackingUnit = id => {
   };
 };
 
+export const clearAttackingUnit = id => {
+  return {
+    type: 'CLEAR_ATTACKING_UNIT'
+  };
+};
+
 export const addCommander = commander => ({
   type: 'ADD_COMMANDER',
   payload: commander
