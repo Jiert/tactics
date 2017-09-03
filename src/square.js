@@ -35,8 +35,30 @@ const backgroundColor = props => {
   return lightGreen;
 };
 
+const backgroundImage = props => {
+  if (props.type) {
+    switch (props.type.name) {
+      case 'Forest':
+        return '🌲';
+      case 'Hills':
+        return '⛰';
+      case 'Mountains':
+        return '🏔';
+      default:
+        return '';
+    }
+  }
+
+  return '';
+};
+
+// NOTE: For the background icon, we should create another component <Icon>
+// That handles this specifically. that we can use css filters and masts, etc.
 const Wrapper = styled.div`
-  background: ${props => backgroundColor(props)};
+  position: relative;
+  background-color: ${props => backgroundColor(props)};
+  background-position: center;
+  background-repeat: no-repeat;
   height: 50px;
   width: 50px;
   box-shadow: inset 1px 1px 0px 0px rgb(255, 255, 255),
@@ -46,6 +68,17 @@ const Wrapper = styled.div`
   align-items: center;
   span {
     display: none;
+  }
+  &::before {
+    font-size: 2.5em;
+    content: '${props => backgroundImage(props)}';
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.75;
   }
 `;
 
@@ -230,6 +263,7 @@ class Square extends Component {
   render() {
     return (
       <Wrapper
+        type={this.props.square.type}
         onClick={this.onClick}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
@@ -243,9 +277,8 @@ class Square extends Component {
           {this.props.square.location.x}
           {this.props.square.location.y}
         </span>
-        {this.state.unit && (
-          <Unit unit={this.state.unit} location={this.props.square.location} />
-        )}
+        {this.state.unit &&
+          <Unit unit={this.state.unit} location={this.props.square.location} />}
       </Wrapper>
     );
   }
