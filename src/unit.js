@@ -30,33 +30,36 @@ const shouldBattle = props =>
   props.unit.commanderId !== props.commanderId; // <- the units aren't on the same team
 
 const Wrapper = styled.div`
-  font-size: 30px;
+  box-shadow: ${props =>
+    props.active
+      ? 'inset 0 0 0px 1px #c1c1c1, inset 0 0 10px 2px yellow'
+      : 'none'};
+  flex-direction: column;
+  font-size: 26px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
-  position: relative;
   &:hover {
     cursor: pointer;
   }
-  box-shadow: ${props =>
-    props.active
-      ? 'inset 0 0 0px 2px rgb(255, 238, 37)'
-      : props => `inset 0 0 0px 2px ${props.color}`};
 `;
 
-const HealthContainer = styled.div`
-  position: absolute;
-  top: 3px;
-  left: 10px;
-  right: 10px;
-`;
+const HealthContainer = styled.div`width: 75%;`;
 
 const Health = styled.div`
   height: 3px;
   width: ${props => healthPercent(props)}%;
   background: #25bf25;
+`;
+
+const UnitContainer = styled.div`
+  border-radius: 10%;
+  box-shadow: ${props => `inset 0 0 0px 2px ${props.color}`};
+  background: #fff;
+  padding: 2px 6px 0;
+  margin-top: 3px;
 `;
 
 class Unit extends Component {
@@ -67,7 +70,6 @@ class Unit extends Component {
   }
 
   //TODO: Think about implementing shouldComponentUpdate
-
   componentWillReceiveProps(nextProps) {
     if (this.props.unit.health > 0 && nextProps.unit.health <= 0) {
       this.perish();
@@ -142,15 +144,13 @@ class Unit extends Component {
 
   render() {
     return (
-      <Wrapper
-        onClick={this.onClick}
-        active={this.props.active}
-        color={this.props.color}
-      >
+      <Wrapper onClick={this.onClick} active={this.props.active}>
         <HealthContainer>
           <Health unit={this.props.unit} />
         </HealthContainer>
-        {this.props.unit.symbol}
+        <UnitContainer color={this.props.color}>
+          {this.props.unit.symbol}
+        </UnitContainer>
       </Wrapper>
     );
   }

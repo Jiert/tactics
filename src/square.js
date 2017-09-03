@@ -70,6 +70,7 @@ const Wrapper = styled.div`
     display: none;
   }
   &::before {
+    z-index: -1;
     font-size: 2.5em;
     content: '${props => backgroundImage(props)}';
     text-align: center;
