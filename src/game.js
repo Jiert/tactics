@@ -4,15 +4,6 @@ import Squares from './squares';
 import Menu from './menu';
 
 class Game extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      boardHeight: 20,
-      boardWidth: 30
-    };
-  }
-
   componentWillMount() {
     // TODO: We need to make sure that we don't get out
     // of sync when we refresh
@@ -22,10 +13,7 @@ class Game extends Component {
   render() {
     return (
       <div>
-        <Squares
-          boardHeight={this.state.boardHeight}
-          boardWidth={this.state.boardWidth}
-        />
+        <Squares />
         <Menu />
       </div>
     );

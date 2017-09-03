@@ -1,28 +1,20 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
 import Square from './square';
 
+// TODO: Parametarize these again
+// height: ${props => 50 * props.boardHeight}px;
+// width: ${props => 50 * props.boardWidth}px;
 const Wrapper = styled.div`
   margin: auto;
   padding: 30px 30px 200px;
   flex-wrap: wrap;
   display: flex;
-  height: ${props => 50 * props.boardHeight}px;
-  width: ${props => 50 * props.boardWidth}px;
+  height: 1000px;
+  width: 1500px;
 `;
-
-const getSquares = (height, width) => {
-  const squares = [];
-
-  for (var y = height; y >= 1; y--) {
-    for (var x = 1; x <= width; x++) {
-      squares.push({x, y});
-    }
-  }
-
-  return squares;
-};
 
 class Squares extends Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -30,24 +22,28 @@ class Squares extends Component {
   }
 
   render() {
-    const squares = getSquares(this.props.boardHeight, this.props.boardWidth);
-
     return (
-      <Wrapper
-        boardHeight={this.props.boardHeight}
-        boardWidth={this.props.boardWidth}
-      >
-        {squares.map(square =>
-          <Square key={`${square.x}.${square.y}`} square={square} />
-        )}
+      <Wrapper>
+        {Object.keys(this.props.squares).map(key => {
+          const square = this.props.squares[key];
+          return (
+            <Square
+              key={`${square.location.x}.${square.location.y}`}
+              square={square}
+            />
+          );
+        })}
       </Wrapper>
     );
   }
 }
 
 Squares.propTypes = {
-  boardHeight: PropTypes.number.isRequired,
-  boardWidth: PropTypes.number.isRequired
+  squares: PropTypes.object.isRequired
 };
 
-export default Squares;
+const mapStateToProps = state => ({
+  squares: state.squares
+});
+
+export default connect(mapStateToProps)(Squares);

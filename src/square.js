@@ -59,12 +59,7 @@ class Square extends Component {
     this.onMouseLeave = this.onMouseLeave.bind(this);
     this.unitHereShouldMove = this.unitHereShouldMove.bind(this);
     this.inRangeOfAttack = this.inRangeOfAttack.bind(this);
-
-    this.key = `${props.square.x}.${props.square.y}`;
-    this.location = {
-      x: props.square.x,
-      y: props.square.y
-    };
+    this.key = `${props.square.location.x}.${props.square.location.y}`;
 
     this.state = {
       unit: this.getUnit(props),
@@ -86,7 +81,7 @@ class Square extends Component {
       props.unitMoving &&
       props.activeUnit.id === this.state.unit.id &&
       props.intendedDestination &&
-      !isEqual(props.intendedDestination, this.location)
+      !isEqual(props.intendedDestination, this.props.square.location)
     );
   }
 
@@ -118,19 +113,26 @@ class Square extends Component {
     const attackingUnitLocation = this.props.activeUnit.location;
     const attackRange = this.props.units[this.props.activeUnit.id].attackRange;
 
-    return inRange(this.location, attackingUnitLocation, attackRange);
+    return inRange(
+      this.props.square.location,
+      attackingUnitLocation,
+      attackRange
+    );
   }
 
   moveUnit(props) {
     // 1. update the unit's movesLeft property
-    const moved = distanceMoved(this.location, props.intendedDestination);
+    const moved = distanceMoved(
+      this.props.square.location,
+      props.intendedDestination
+    );
 
     this.context.io.emit('updateUnit', this.state.unit.id, {
       movesLeft: this.state.unit.movesLeft - moved
     });
 
     // 2. Remove the unit at this location
-    this.context.io.emit('setUnitLocation', null, this.location);
+    this.context.io.emit('setUnitLocation', null, this.props.square.location);
 
     // 3. Move the unit to the new place (at some point we'll need to make sure it's successful)
     this.context.io.emit(
@@ -194,13 +196,13 @@ class Square extends Component {
     const movingUnitLocation = props.activeUnit.location;
     const movement = props.units[props.activeUnit.id].movesLeft;
 
-    return inRange(this.location, movingUnitLocation, movement);
+    return inRange(this.props.square.location, movingUnitLocation, movement);
   }
 
   onClick(event) {
     if (this.props.unitMoving) {
       if (this.inMovingUnitsRange(this.props)) {
-        this.props.setDestinationIntent(this.location);
+        this.props.setDestinationIntent(this.props.square.location);
       } else {
         this.props.setMoveMode(false);
       }
@@ -238,11 +240,11 @@ class Square extends Component {
         moving={this.props.unitMoving}
       >
         <span>
-          {this.props.square.x}
-          {this.props.square.y}
+          {this.props.square.location.x}
+          {this.props.square.location.y}
         </span>
         {this.state.unit && (
-          <Unit unit={this.state.unit} location={this.location} />
+          <Unit unit={this.state.unit} location={this.props.square.location} />
         )}
       </Wrapper>
     );
