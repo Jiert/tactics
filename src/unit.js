@@ -12,20 +12,22 @@ const getRandomInt = (min, max) => {
 const healthPercent = props => props.unit.health / props.unit.maxHealth * 100;
 
 /*
- * NOTE: So again, this is going to require that we assuem the attacking
+ * NOTE: So again, this is going to require that we assume the attacking
  * unit is the same as the active unit, and all of this logic happens locally.
  * At some point it might be better to determine this on the server
+ * TODO: This should all be on the server.
  * TODO: gotta rethink this pattern. Maybe we set all of the unit object active */
 const shouldBattle = props =>
-  props.unit &&
-  props.attackingUnitId &&
-  props.attackingUnitId !== props.unit.id &&
+  props.unit && // <- there's a unit here to attack
+  props.attackingUnitId && // <-- there's a unit who is attacking
+  props.attackingUnitId !== props.unit.id && // <- they aren't the same unit
+  props.units[props.activeUnit.id].movesLeft && // <- the attacking unit has moves left. This might not be necessary if moves left is updated correctly after a move or attack.
   inRange(
     props.location,
     props.activeUnit.location,
     props.units[props.activeUnit.id].attackRange
-  ) &&
-  props.unit.commanderId !== props.commanderId;
+  ) && // <- The units are within attack range of the attacking unit
+  props.unit.commanderId !== props.commanderId; // <- the units aren't on the same team
 
 const Wrapper = styled.div`
   font-size: 30px;
@@ -64,6 +66,8 @@ class Unit extends Component {
     this.onClick = this.onClick.bind(this);
   }
 
+  //TODO: Think about implementing shouldComponentUpdate
+
   componentWillReceiveProps(nextProps) {
     if (this.props.unit.health > 0 && nextProps.unit.health <= 0) {
       this.perish();
@@ -83,6 +87,8 @@ class Unit extends Component {
     // their baseline number for damage they can cause.
     // For now though, we'll just randomly halve the hit points
 
+    // TODO: This should all happen on the server
+
     const random = getRandomInt(1, this.props.unit.maxHealth / 2);
     const newHealth = this.props.unit.health - random;
 
@@ -91,6 +97,15 @@ class Unit extends Component {
     });
 
     this.props.setAttackingUnit(null);
+  }
+
+  // TODO: This should all be on the server toooooo....
+  updateAttackersMoves() {
+    const attackingUnit = this.props.units[this.props.activeUnit.id];
+    const movesLeft = attackingUnit.movesLeft - 1;
+    this.context.io.emit('updateUnit', attackingUnit.id, {
+      movesLeft
+    });
   }
 
   onClick(event) {
@@ -117,6 +132,7 @@ class Unit extends Component {
 
     if (shouldBattle(this.props)) {
       this.battle();
+      this.updateAttackersMoves();
     } else if (this.props.unit.commanderId === this.props.commanderId) {
       this.props.setMoveMode(false);
       this.props.setAttackingUnit(null);
@@ -141,7 +157,9 @@ class Unit extends Component {
 }
 
 Unit.propTypes = {
+  activeUnit: PropTypes.object,
   unit: PropTypes.object.isRequired,
+  units: PropTypes.object.isRequired,
   active: PropTypes.bool.isRequired,
   attackingUnitId: PropTypes.string,
   commanderId: PropTypes.string.isRequired,
