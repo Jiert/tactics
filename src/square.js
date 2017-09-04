@@ -156,6 +156,9 @@ class Square extends Component {
 
   moveUnit(props) {
     // 1. update the unit's movesLeft property
+
+    // TODO: Take into account props.square.type && props.square.type
+    // NOTE: I think this should happen befor the move click
     const moved = distanceMoved(
       this.props.square.location,
       props.intendedDestination
@@ -223,14 +226,23 @@ class Square extends Component {
 
   // TODO: This should be on the prototype or a standalone function
   inMovingUnitsRange(props) {
+    // TODO: Need to take into account the movement penalties
     if (!props.unitMoving || !props.activeUnit.location) {
       return false;
     }
 
     const movingUnitLocation = props.activeUnit.location;
-    const movement = props.units[props.activeUnit.id].movesLeft;
 
-    return inRange(this.props.square.location, movingUnitLocation, movement);
+    // movement needs to check against penalty.
+    const movement = props.units[props.activeUnit.id].movesLeft;
+    const penalty =
+      this.props.square.type && this.props.square.type.movementPenalty;
+
+    // TODO: This is buggy, I don't calculate the total distance, so a unit
+    // can travel over a mountain range in one move
+    const distance = penalty ? movement - penalty : movement;
+
+    return inRange(this.props.square.location, movingUnitLocation, distance);
   }
 
   onClick(event) {
