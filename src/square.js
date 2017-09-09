@@ -93,27 +93,27 @@ class Square extends Component {
     this.onMouseLeave = this.onMouseLeave.bind(this);
     this.unitHereShouldMove = this.unitHereShouldMove.bind(this);
     this.inRangeOfAttack = this.inRangeOfAttack.bind(this);
-    this.key = `${props.square.location.x}.${props.square.location.y}`;
+    // this.key = `${props.square.location.x}.${props.square.location.y}`;
 
     this.state = {
-      unit: this.getUnit(props),
+      // unit: this.getUnit(props),
       hover: false,
       highlight: false
     };
   }
 
-  getUnit(props) {
-    const unitId = props.unitsByLocation && props.unitsByLocation[this.key];
-    const unit = props.units[unitId];
+  // getUnit(props) {
+  //   const unitId = props.unitsByLocation && props.unitsByLocation[this.key];
+  //   const unit = props.units[unitId];
 
-    return unit || null;
-  }
+  //   return unit || null;
+  // }
 
   unitHereShouldMove(props) {
     return (
-      this.state.unit &&
+      this.props.unit &&
       props.unitMoving &&
-      props.activeUnit.id === this.state.unit.id &&
+      props.activeUnit.id === this.props.unit.id &&
       props.intendedDestination &&
       !isEqual(props.intendedDestination, this.props.square.location)
     );
@@ -134,7 +134,7 @@ class Square extends Component {
     }
 
     // if the attacking unit is on this square, return
-    if (this.state.unit && this.state.unit.id === nextProps.attackingUnitId) {
+    if (this.props.unit && this.props.unit.id === nextProps.attackingUnitId) {
       return false;
     }
 
@@ -164,8 +164,8 @@ class Square extends Component {
       props.intendedDestination
     );
 
-    this.context.io.emit('updateUnit', this.state.unit.id, {
-      movesLeft: this.state.unit.movesLeft - moved
+    this.context.io.emit('updateUnit', this.props.unit.id, {
+      movesLeft: this.props.unit.movesLeft - moved
     });
 
     // 2. Remove the unit at this location
@@ -195,33 +195,34 @@ class Square extends Component {
       this.moveUnit(nextProps);
     }
 
-    const unit = this.getUnit(nextProps);
+    // const unit = this.getUnit(nextProps);
     const highlight = this.inMovingUnitsRange(nextProps);
     const attackHighlight = this.inRangeOfAttack(nextProps);
 
     this.setState({
-      unit,
+      // unit,
       highlight,
       attackHighlight
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const nextUnit = this.getUnit(nextProps);
+    // // const nextUnit = this.getUnit(nextProps);
 
-    if (
-      (nextUnit && this.state.unit === null) ||
-      (nextUnit && this.state.unit && !isEqual(this.state.unit, nextUnit)) ||
-      this.state.hover !== nextState.hover ||
-      this.inMovingUnitsRange(nextProps) ||
-      this.props.unitsByLocation[this.key] !==
-        nextProps.unitsByLocation[this.key] ||
-      this.state.attackHighlight !== nextState.attackHighlight ||
-      (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
-    ) {
-      return true;
-    }
-    return false;
+    // if (
+    //   // (nextUnit && this.props.unit === null) ||
+    //   // (nextUnit && this.props.unit && !isEqual(this.props.unit, nextUnit)) ||
+    //   this.state.hover !== nextState.hover ||
+    //   this.inMovingUnitsRange(nextProps) ||
+    //   // this.props.unitsByLocation[this.key] !==
+    //   //   nextProps.unitsByLocation[this.key] ||
+    //   this.state.attackHighlight !== nextState.attackHighlight ||
+    //   (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
+    // ) {
+    //   return true;
+    // }
+    // return false;
+    return true;
   }
 
   // TODO: This should be on the prototype or a standalone function
@@ -283,15 +284,14 @@ class Square extends Component {
         highlight={this.state.highlight}
         attackHighlight={this.state.attackHighlight}
         hover={this.state.hover}
-        unit={this.state.unit}
+        unit={this.props.unit}
         moving={this.props.unitMoving}
       >
         <span>
-          {this.props.square.location.x}
-          {this.props.square.location.y}
+          {this.props.location}
         </span>
-        {this.state.unit &&
-          <Unit unit={this.state.unit} location={this.props.square.location} />}
+        {this.props.unit &&
+          <Unit unit={this.props.unit} location={this.props.square.location} />}
       </Wrapper>
     );
   }
@@ -302,28 +302,49 @@ Square.contextTypes = {
 };
 
 Square.propTypes = {
+  // Verified
+
+  // Passed in as a prop '1.1'
+  location: PropTypes.string,
+  // Derived from mapStateTOProps. Could be a selector
+  unit: PropTypes.object,
+  // Derived from mapStateToProps
+  square: PropTypes.object.isRequired,
+
+  // Dispatch calls
   clearAttackingUnit: PropTypes.func.isRequired,
+  setDestinationIntent: PropTypes.func.isRequired,
+  setActiveUnit: PropTypes.func.isRequired,
+  setMoveMode: PropTypes.func.isRequired,
+
+  // Not sure if we'll need these now or not
   attackingUnitId: PropTypes.string,
   intendedDestination: PropTypes.object,
   activeUnit: PropTypes.object.isRequired,
-  units: PropTypes.object.isRequired,
-  unitsByLocation: PropTypes.object.isRequired,
-  unitMoving: PropTypes.bool.isRequired,
-  setMoveMode: PropTypes.func.isRequired,
-  setActiveUnit: PropTypes.func.isRequired,
-  setDestinationIntent: PropTypes.func.isRequired,
-  square: PropTypes.object.isRequired
+  unitMoving: PropTypes.bool.isRequired
 };
 
 // TODO: Think about how we can cut down on prop changes
-const mapStateToProps = state => ({
-  attackingUnitId: state.move.attackingUnitId,
-  intendedDestination: state.move.intendedDestination,
-  activeUnit: state.activeUnit,
-  units: state.units,
-  unitsByLocation: state.unitsByLocation,
-  unitMoving: state.move.mode
-});
+const mapStateToProps = (state, ownProps) => {
+  const square = state.squares[ownProps.location];
+  const unit = state.units[square.unitId];
+
+  return {
+    attackingUnitId: state.move.attackingUnitId,
+    intendedDestination: state.move.intendedDestination,
+    activeUnit: state.activeUnit,
+    // Unit could be a selector, but we need to make sure it gets memoized
+    // square: state.squares[ownProps.location],
+    // This should be a selector?
+    // unit: state.units[ownProps.square.unitId],
+    unit,
+    square,
+
+    // units: state.units,
+    // unitsByLocation: state.unitsByLocation,
+    unitMoving: state.move.mode
+  };
+};
 
 const mapDispatchToProps = dispatch => ({
   setMoveMode: bool => dispatch(setMoveMode(bool)),

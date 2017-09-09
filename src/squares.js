@@ -26,12 +26,9 @@ class Squares extends Component {
       <Wrapper>
         {Object.keys(this.props.squares).map(key => {
           const square = this.props.squares[key];
-          return (
-            <Square
-              key={`${square.location.x}.${square.location.y}`}
-              square={square}
-            />
-          );
+          const location = `${square.location.x}.${square.location.y}`;
+
+          return <Square key={location} location={location} />;
         })}
       </Wrapper>
     );
