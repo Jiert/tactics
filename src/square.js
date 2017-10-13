@@ -169,22 +169,24 @@ class Square extends Component {
     });
 
     // 2. Remove the unit at this location
-    this.context.io.emit('setUnitLocation', null, this.props.square.location);
+    this.context.io.emit('setUnitAtSquare', null, this.props.square.location);
 
     // 3. Move the unit to the new place (at some point we'll need to make sure it's successful)
     this.context.io.emit(
-      'setUnitLocation',
+      'setUnitAtSquare',
       props.activeUnit.id,
       props.intendedDestination
     );
 
     // 4. Since we're using the active Unit here, we need to update it's location
     // We don't need to emit this one becuase the other player doesn't see the active unit
-    this.props.setActiveUnit(props.activeUnit.id, props.intendedDestination);
+    this.props.dispatch(
+      setActiveUnit(props.activeUnit.id, props.intendedDestination)
+    );
 
     // 5. Null out intent, moving,
-    this.props.setDestinationIntent(null);
-    this.props.setMoveMode(false);
+    this.props.dispatch(setDestinationIntent(null));
+    this.props.dispatch(setMoveMode(false));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -235,6 +237,8 @@ class Square extends Component {
     const movingUnitLocation = props.activeUnit.location;
 
     // movement needs to check against penalty.
+    // we should think about storig all of the acive units info in state so
+    // we can get rid of mapping all units to every single square
     const movement = props.units[props.activeUnit.id].movesLeft;
     const penalty =
       this.props.square.type && this.props.square.type.movementPenalty;
@@ -249,15 +253,17 @@ class Square extends Component {
   onClick(event) {
     if (this.props.unitMoving) {
       if (this.inMovingUnitsRange(this.props)) {
-        this.props.setDestinationIntent(this.props.square.location);
+        // TODO: I don't think we want to use this action anymore
+        this.props.dispatch(setDestinationIntent(this.props.square.location));
+        // this.context.io.emit('setUnitAtSquare', this.props.unit.id, this.props.square.location);
       } else {
-        this.props.setMoveMode(false);
+        this.props.dispatch(setMoveMode(false));
       }
     } else if (this.props.attackingUnitId) {
-      this.props.clearAttackingUnit();
+      this.props.dispatch(clearAttackingUnit());
     } else {
       // TODO maybe do a check here instead of spamming
-      this.props.setActiveUnit(null, null);
+      this.props.dispatch(setActiveUnit(null, null));
     }
   }
 
@@ -303,19 +309,13 @@ Square.contextTypes = {
 
 Square.propTypes = {
   // Verified
-
+  dispatch: PropTypes.func.isRequired,
   // Passed in as a prop '1.1'
   location: PropTypes.string,
   // Derived from mapStateTOProps. Could be a selector
   unit: PropTypes.object,
   // Derived from mapStateToProps
   square: PropTypes.object.isRequired,
-
-  // Dispatch calls
-  clearAttackingUnit: PropTypes.func.isRequired,
-  setDestinationIntent: PropTypes.func.isRequired,
-  setActiveUnit: PropTypes.func.isRequired,
-  setMoveMode: PropTypes.func.isRequired,
 
   // Not sure if we'll need these now or not
   attackingUnitId: PropTypes.string,
@@ -340,17 +340,11 @@ const mapStateToProps = (state, ownProps) => {
     unit,
     square,
 
-    // units: state.units,
+    // TODO: don't do this!
+    units: state.units,
     // unitsByLocation: state.unitsByLocation,
     unitMoving: state.move.mode
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  setMoveMode: bool => dispatch(setMoveMode(bool)),
-  setActiveUnit: (id, location) => dispatch(setActiveUnit(id, location)),
-  setDestinationIntent: location => dispatch(setDestinationIntent(location)),
-  clearAttackingUnit: () => dispatch(clearAttackingUnit())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Square);
+export default connect(mapStateToProps)(Square);
