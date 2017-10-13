@@ -8,7 +8,6 @@ import commander from './commander';
 import connected from './connected';
 import activeUnit from './activeUnit';
 import activePlayer from './active-player';
-import unitsByLocation from './units-by-location';
 import {combineReducers} from 'redux';
 
 const battleApp = combineReducers({
@@ -21,8 +20,7 @@ const battleApp = combineReducers({
   commander,
   connected,
   activeUnit,
-  activePlayer,
-  unitsByLocation
+  activePlayer
 });
 
 const rootReducer = (state, action) => {

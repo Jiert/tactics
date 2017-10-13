@@ -78,7 +78,7 @@ class Unit extends Component {
 
   perish() {
     // 1: Set (or delete) this unit's id from the location map
-    this.context.io.emit('setUnitLocation', null, this.props.location);
+    this.context.io.emit('setUnitAtSquare', null, this.props.location);
 
     // 2: Profit? Is that all?
   }

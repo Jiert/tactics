@@ -93,21 +93,12 @@ class Square extends Component {
     this.onMouseLeave = this.onMouseLeave.bind(this);
     this.unitHereShouldMove = this.unitHereShouldMove.bind(this);
     this.inRangeOfAttack = this.inRangeOfAttack.bind(this);
-    // this.key = `${props.square.location.x}.${props.square.location.y}`;
 
     this.state = {
-      // unit: this.getUnit(props),
       hover: false,
       highlight: false
     };
   }
-
-  // getUnit(props) {
-  //   const unitId = props.unitsByLocation && props.unitsByLocation[this.key];
-  //   const unit = props.units[unitId];
-
-  //   return unit || null;
-  // }
 
   unitHereShouldMove(props) {
     return (
@@ -157,7 +148,7 @@ class Square extends Component {
   moveUnit(props) {
     // 1. update the unit's movesLeft property
 
-    // TODO: Take into account props.square.type && props.square.type
+    // TODO: Take into account props.square.type
     // NOTE: I think this should happen befor the move click
     const moved = distanceMoved(
       this.props.square.location,
@@ -197,34 +188,26 @@ class Square extends Component {
       this.moveUnit(nextProps);
     }
 
-    // const unit = this.getUnit(nextProps);
     const highlight = this.inMovingUnitsRange(nextProps);
     const attackHighlight = this.inRangeOfAttack(nextProps);
 
     this.setState({
-      // unit,
       highlight,
       attackHighlight
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // // const nextUnit = this.getUnit(nextProps);
-
-    // if (
-    //   // (nextUnit && this.props.unit === null) ||
-    //   // (nextUnit && this.props.unit && !isEqual(this.props.unit, nextUnit)) ||
-    //   this.state.hover !== nextState.hover ||
-    //   this.inMovingUnitsRange(nextProps) ||
-    //   // this.props.unitsByLocation[this.key] !==
-    //   //   nextProps.unitsByLocation[this.key] ||
-    //   this.state.attackHighlight !== nextState.attackHighlight ||
-    //   (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
-    // ) {
-    //   return true;
-    // }
-    // return false;
-    return true;
+    if (
+      !isEqual(this.props.unit, nextProps.unit) ||
+      this.state.hover !== nextState.hover ||
+      this.inMovingUnitsRange(nextProps) ||
+      this.state.attackHighlight !== nextState.attackHighlight ||
+      (this.state.highlight && this.props.unitMoving !== nextProps.unitMoving)
+    ) {
+      return true;
+    }
+    return false;
   }
 
   // TODO: This should be on the prototype or a standalone function
@@ -253,9 +236,7 @@ class Square extends Component {
   onClick(event) {
     if (this.props.unitMoving) {
       if (this.inMovingUnitsRange(this.props)) {
-        // TODO: I don't think we want to use this action anymore
         this.props.dispatch(setDestinationIntent(this.props.square.location));
-        // this.context.io.emit('setUnitAtSquare', this.props.unit.id, this.props.square.location);
       } else {
         this.props.dispatch(setMoveMode(false));
       }
@@ -308,18 +289,11 @@ Square.contextTypes = {
 };
 
 Square.propTypes = {
-  // Verified
   dispatch: PropTypes.func.isRequired,
-  // Passed in as a prop '1.1'
   location: PropTypes.string,
-  // Derived from mapStateTOProps. Could be a selector
   unit: PropTypes.object,
-  // Derived from mapStateToProps
   square: PropTypes.object.isRequired,
-
-  // Not sure if we'll need these now or not
   attackingUnitId: PropTypes.string,
-  intendedDestination: PropTypes.object,
   activeUnit: PropTypes.object.isRequired,
   unitMoving: PropTypes.bool.isRequired
 };
@@ -327,22 +301,15 @@ Square.propTypes = {
 // TODO: Think about how we can cut down on prop changes
 const mapStateToProps = (state, ownProps) => {
   const square = state.squares[ownProps.location];
-  const unit = state.units[square.unitId];
 
   return {
     attackingUnitId: state.move.attackingUnitId,
     intendedDestination: state.move.intendedDestination,
     activeUnit: state.activeUnit,
-    // Unit could be a selector, but we need to make sure it gets memoized
-    // square: state.squares[ownProps.location],
-    // This should be a selector?
-    // unit: state.units[ownProps.square.unitId],
-    unit,
     square,
-
+    unit: state.units[square.unitId],
     // TODO: don't do this!
     units: state.units,
-    // unitsByLocation: state.unitsByLocation,
     unitMoving: state.move.mode
   };
 };
